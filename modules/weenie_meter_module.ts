@@ -21,7 +21,7 @@ export const weenieMeterModule = () => {
       if (!weenies.hasOwnProperty(user)) {
         weenies[user] = weenie[0] || Math.floor(Math.random() * (30 - 5) + 5);
         if (weenies[user] <= 5) {
-          bot.sendMessage(msg.chat.id, `Жесть... пенис как у izy0... ${weenie}см`);
+          bot.sendMessage(msg.chat.id, `Жесть... вот это корнишончик... ${weenie}см`);
         } else if (weenies[user] <= 10) {
           bot.sendMessage(msg.chat.id, `Твоя пися ${weenie}см. Соболезнуем ;(`);
         } else if (weenies[user] <= 15) {
