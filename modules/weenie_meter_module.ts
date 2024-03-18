@@ -9,7 +9,7 @@ type TWeeniesMap = {
 };
 
 export const weenieMeterModule = () => {
-  const weenies: TWeeniesMap = JSON.parse(fs.readFileSync('./data_files/weenies.txt').toString());
+  let weenies: TWeeniesMap = JSON.parse(fs.readFileSync('./data_files/weenies.txt').toString());
 
   bot.on('text', async (msg) => {
     if (msg.text?.toLowerCase() === 'пися') {
@@ -58,6 +58,7 @@ export const weenieMeterModule = () => {
   rule.tz = 'Europe/Moscow';
   schedule.scheduleJob(rule, () => {
     fs.writeFileSync('./data_files/weenies.txt', '{}');
+    weenies = JSON.parse(fs.readFileSync('./data_files/weenies.txt').toString());
     bot.sendMessage(CHAT_ID, 'Великое обнуление пиписек!');
   });
 };

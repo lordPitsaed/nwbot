@@ -9,7 +9,7 @@ type TIqMap = {
 };
 
 export const iqMeterModule = () => {
-  const iqs: TIqMap = JSON.parse(fs.readFileSync('./data_files/iq.txt').toString());
+  let iqs: TIqMap = JSON.parse(fs.readFileSync('./data_files/iq.txt').toString());
 
   bot.on('text', async (msg) => {
     if (msg.text?.toLowerCase() === 'айку' || msg.text?.toLowerCase() === 'iq') {
@@ -62,6 +62,7 @@ export const iqMeterModule = () => {
   rule.tz = 'Europe/Moscow';
   schedule.scheduleJob(rule, () => {
     fs.writeFileSync('./data_files/iq.txt', '{}');
+    iqs = JSON.parse(fs.readFileSync('./data_files/iq.txt').toString());
     bot.sendMessage(CHAT_ID, 'Великое обнуление очкоф интеллекта!');
   });
 };
