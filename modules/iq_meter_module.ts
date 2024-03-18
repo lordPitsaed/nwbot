@@ -9,7 +9,7 @@ type TIqMap = {
 };
 
 export const iqMeterModule = () => {
-  const iqs: TIqMap = JSON.parse(fs.readFileSync('./iq.txt').toString());
+  const iqs: TIqMap = JSON.parse(fs.readFileSync('./data_files/iq.txt').toString());
 
   bot.on('text', async (msg) => {
     if (msg.text?.toLowerCase() === 'айку' || msg.text?.toLowerCase() === 'iq') {

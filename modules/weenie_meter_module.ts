@@ -9,7 +9,7 @@ type TWeeniesMap = {
 };
 
 export const weenieMeterModule = () => {
-  const weenies: TWeeniesMap = JSON.parse(fs.readFileSync('./data-files/weenies.txt').toString());
+  const weenies: TWeeniesMap = JSON.parse(fs.readFileSync('./data_files/weenies.txt').toString());
 
   bot.on('text', async (msg) => {
     if (msg.text?.toLowerCase() === 'пися') {
