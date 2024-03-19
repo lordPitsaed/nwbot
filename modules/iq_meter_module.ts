@@ -8,8 +8,16 @@ type TIqMap = {
   [x: string]: number;
 };
 
+const REQUIRED_FILE = './data_files/iq.txt';
+
 export const iqMeterModule = () => {
-  let iqs: TIqMap = JSON.parse(fs.readFileSync('./data_files/iq.txt').toString());
+  try {
+    fs.readFileSync(REQUIRED_FILE);
+  } catch {
+    fs.writeFileSync(REQUIRED_FILE, '{}');
+  }
+
+  let iqs: TIqMap = JSON.parse(fs.readFileSync(REQUIRED_FILE, { encoding: 'utf-8' }));
 
   bot.on('text', async (msg) => {
     if (msg.text?.toLowerCase() === 'айку' || msg.text?.toLowerCase() === 'iq') {
@@ -39,7 +47,7 @@ export const iqMeterModule = () => {
         bot.sendMessage(msg.chat.id, `А ну-ка нах! Ваш интеллект уже учтен - ${iqs[user]}п.`);
       }
 
-      fs.writeFileSync('./data_files/iq.txt', JSON.stringify(iqs));
+      fs.writeFileSync(REQUIRED_FILE, JSON.stringify(iqs));
     }
 
     if (msg.text?.toLowerCase() === 'писятоп') {
@@ -61,8 +69,8 @@ export const iqMeterModule = () => {
   rule.minute = 0;
   rule.tz = 'Europe/Moscow';
   schedule.scheduleJob(rule, () => {
-    fs.writeFileSync('./data_files/iq.txt', '{}');
-    iqs = JSON.parse(fs.readFileSync('./data_files/iq.txt').toString());
+    fs.writeFileSync(REQUIRED_FILE, '{}');
+    iqs = JSON.parse(fs.readFileSync(REQUIRED_FILE, { encoding: 'utf-8' }));
     bot.sendMessage(CHAT_ID, 'Великое обнуление очкоф интеллекта!');
   });
 };

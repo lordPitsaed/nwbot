@@ -1,6 +1,4 @@
-import fs from 'fs';
-import TelegramBot from 'node-telegram-bot-api';
-import { ALERT_TOPIC, CHAT_ID, userIds } from '../constants';
+import { CHAT_ID, userIds } from '../constants';
 import { getUserNamesById, mapUsernamesToMsg } from '../helpers';
 import { bot } from '../main';
 
@@ -16,9 +14,7 @@ export const alertsModule = async () => {
     }
 
     if (/@all/gimu.test(msg.text || '')) {
-      bot.sendMessage(msg.chat.id, `ВСЕ СЮДА НАХУЙ ${mapUsernamesToMsg(userNames)}`, {
-        message_thread_id: +ALERT_TOPIC,
-      });
+      bot.sendMessage(msg.chat.id, `${msg.from?.username} созвал всех ${mapUsernamesToMsg(userNames)}`);
     }
 
     if (/^.* *когда *.*[?$]/gimu.test(msg.text || '')) {

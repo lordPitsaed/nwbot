@@ -1,9 +1,10 @@
 import dotenv from 'dotenv';
+import fs from 'fs';
 import schedule from 'node-schedule';
 import TelegramBot from 'node-telegram-bot-api';
 import repl from 'repl';
 import { BOT_TOKEN } from './constants';
-import { alertsModule, iqMeterModule, userRememberingModule } from './modules';
+import { alertsModule, iqMeterModule, sigameRandomModule, userRememberingModule } from './modules';
 import { weenieMeterModule } from './modules/weenie_meter_module';
 
 dotenv.config();
@@ -16,6 +17,7 @@ userRememberingModule();
 alertsModule();
 weenieMeterModule();
 iqMeterModule();
+sigameRandomModule();
 
 bot.onText(/\/ruok/, (msg) => {
   bot.sendMessage(msg.chat.id, 'I`M OK');

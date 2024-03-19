@@ -8,8 +8,15 @@ type TWeeniesMap = {
   [x: string]: number;
 };
 
+const REQUIRED_FILE = './data_files/weenies.txt';
+
 export const weenieMeterModule = () => {
-  let weenies: TWeeniesMap = JSON.parse(fs.readFileSync('./data_files/weenies.txt').toString());
+  try {
+    fs.readFileSync(REQUIRED_FILE);
+  } catch {
+    fs.writeFileSync(REQUIRED_FILE, '{}');
+  }
+  let weenies: TWeeniesMap = JSON.parse(fs.readFileSync('./data_files/weenies.txt', { encoding: 'utf-8' }));
 
   bot.on('text', async (msg) => {
     if (msg.text?.toLowerCase() === 'пися') {
@@ -35,7 +42,7 @@ export const weenieMeterModule = () => {
         bot.sendMessage(msg.chat.id, `А ну-ка нах! Пися уже есть в базе, смотри - ${weenies[user]}см`);
       }
 
-      fs.writeFileSync('./data_files/weenies.txt', JSON.stringify(weenies));
+      fs.writeFileSync(REQUIRED_FILE, JSON.stringify(weenies));
     }
 
     if (msg.text?.toLowerCase() === 'писятоп') {
@@ -57,8 +64,8 @@ export const weenieMeterModule = () => {
   rule.minute = 0;
   rule.tz = 'Europe/Moscow';
   schedule.scheduleJob(rule, () => {
-    fs.writeFileSync('./data_files/weenies.txt', '{}');
-    weenies = JSON.parse(fs.readFileSync('./data_files/weenies.txt').toString());
+    fs.writeFileSync(REQUIRED_FILE, '{}');
+    weenies = JSON.parse(fs.readFileSync(REQUIRED_FILE, { encoding: 'utf-8' }));
     bot.sendMessage(CHAT_ID, 'Великое обнуление пиписек!');
   });
 };
