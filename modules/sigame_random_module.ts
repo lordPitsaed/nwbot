@@ -58,7 +58,7 @@ export const sigameRandomModule = async () => {
       };
       bot.editMessageText(
         'Found pack: ' +
-          `[Name: ${randomPack.package.name} | Rounds count: ${randomPack.package.rounds.length} | Date: ${randomPack.package.date} | Downloads: ${randomPack.package.info.downloads_count}]`,
+          `[Name: ${randomPack.package.name} | Rounds count: ${randomPack.package.rounds.length} | Date: ${randomPack.package.date} | Downloads: ${randomPack.info.downloads_count}]`,
         {
           inline_message_id: cbQuery.inline_message_id,
           reply_markup: {
