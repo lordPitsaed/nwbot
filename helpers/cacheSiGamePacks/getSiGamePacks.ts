@@ -19,7 +19,7 @@ export const getSiGamePacks = async () => {
 
     return parsedData as Data;
   } else {
-    const page = Math.random() * (MAX_PAGE - 1) + 1;
+    const page = Math.floor(Math.random() * (MAX_PAGE - 1) + 1);
     console.log('[INFO] Getting all packs from SIGamePacks. Page:', page);
     try {
       const { data } = await fetch('https://sigame.ru/api/packs?page=' + page).then((res) => {
