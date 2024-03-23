@@ -74,7 +74,7 @@ export const sigameRandomModule = async () => {
     }
   });
   const rule = new schedule.RecurrenceRule();
-  rule.date = 1;
+  rule.date = 15;
 
-  const job = schedule.scheduleJob(rule, getSiGamePacks);
+  const job = schedule.scheduleJob(rule, () => getSiGamePacks(Math.random() * (338 - 1) + 1));
 };

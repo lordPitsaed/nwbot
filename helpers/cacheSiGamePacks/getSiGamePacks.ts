@@ -3,7 +3,7 @@ import { Data, ISiGamePacksResponse } from './ISiGamePacksResponse';
 
 const REQUIRED_FILE = './data_files/sigame_packs.txt';
 
-export const getSiGamePacks = async () => {
+export const getSiGamePacks = async (page?: number) => {
   try {
     fs.readFileSync(REQUIRED_FILE);
   } catch {
@@ -17,14 +17,14 @@ export const getSiGamePacks = async () => {
   } else {
     console.log('[INFO] Getting all packs from SIGamePacks');
     try {
-      const { data } = await fetch('https://sigame.ru/api/packs').then((res) => {
+      const { data } = await fetch('https://sigame.ru/api/packs?page=' + page).then((res) => {
         if (!res.ok) {
           throw new Error('[WARN] SIGame responded with an error' + res);
         }
         return res.json() as Promise<ISiGamePacksResponse>;
       });
       fs.writeFileSync('./data_files/sigame_packs.txt', JSON.stringify(data));
-      console.log(`[INFO] Saved ${data.count}`);
+      console.log(`[INFO] Saved ${data.count}. Page ${page}`);
       return data;
     } catch (error) {
       console.log(error);
