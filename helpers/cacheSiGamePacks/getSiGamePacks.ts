@@ -4,7 +4,7 @@ import { Data, ISiGamePacksResponse } from './ISiGamePacksResponse';
 const REQUIRED_FILE = './data_files/sigame_packs.txt';
 let MAX_PAGE = 338;
 
-export const getSiGamePacks = async () => {
+export const getSiGamePacks = async (refetch?: boolean) => {
   try {
     fs.readFileSync(REQUIRED_FILE);
   } catch {
@@ -12,7 +12,7 @@ export const getSiGamePacks = async () => {
   }
 
   const data = fs.readFileSync(REQUIRED_FILE, { encoding: 'utf-8' });
-  if (data.length > 2) {
+  if (!refetch && data.length > 2) {
     console.log('[INFO] Getting all packs from file. Got ' + (JSON.parse(data) as Data).count);
     const parsedData = JSON.parse(data);
     MAX_PAGE = parsedData.count;

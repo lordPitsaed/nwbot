@@ -74,7 +74,7 @@ export const sigameRandomModule = async () => {
     }
   });
   const rule = new schedule.RecurrenceRule();
-  rule.date = 15;
+  rule.dayOfWeek = 7;
 
-  const job = schedule.scheduleJob(rule, getSiGamePacks);
+  const job = schedule.scheduleJob(rule, () => getSiGamePacks(true));
 };
