@@ -12,7 +12,7 @@ export const getSiGamePacks = async () => {
   }
 
   const data = fs.readFileSync(REQUIRED_FILE, { encoding: 'utf-8' });
-  if (data.length >= 2) {
+  if (data.length > 2) {
     console.log('[INFO] Getting all packs from file. Got ' + (JSON.parse(data) as Data).count);
     const parsedData = JSON.parse(data);
     MAX_PAGE = parsedData.count;
