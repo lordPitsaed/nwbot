@@ -32,6 +32,29 @@ export const sigameRandomModule = async () => {
 
       bot.answerInlineQuery(query.id, [queryResult]);
     }
+
+    if (query.query === 'паки говно') {
+      getSiGamePacks(true);
+      const randomPack = getRandomPack();
+      const queryResult: InlineQueryResultArticle = {
+        type: 'article',
+        id: 'loading_id',
+        title:
+          'Found pack: ' +
+          `[Name: ${randomPack.package.name} | Rounds count: ${randomPack.package.rounds.length} | Date: ${randomPack.package.date} | Downloads: ${randomPack.package.info.downloads_count}]`,
+        input_message_content: {
+          message_text: `[Name: ${randomPack.package.name} | Rounds count: ${randomPack.package.rounds.length} | Date: ${randomPack.package.date} | Downloads: ${randomPack.info.downloads_count}]`,
+        },
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: 'Download', url: randomPack.info.url }],
+            [{ text: 'New', callback_data: 'gen_new_pack' }],
+          ],
+        },
+      };
+
+      bot.answerInlineQuery(query.id, [queryResult]);
+    }
   });
 
   bot.on('callback_query', (cbQuery) => {
