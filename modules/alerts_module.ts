@@ -17,6 +17,12 @@ export const alertsModule = async () => {
       bot.sendMessage(msg.chat.id, `${msg.from?.username} созвал всех ${mapUsernamesToMsg(userNames)}`);
     }
 
+    if (msg.text === '@ALL') {
+      for (let i = 0; i < 5; i++) {
+        bot.sendMessage(msg.chat.id, `${msg.from?.username} созвал всех ${mapUsernamesToMsg(userNames)}`);
+      }
+    }
+
     if (/^.* *когда *.*[?$]/gimu.test(msg.text || '')) {
       return bot.sendPhoto(
         msg.chat.id,
