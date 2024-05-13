@@ -23,7 +23,7 @@ bot.onText(/\/ruok/, (msg) => {
   bot.sendMessage(msg.chat.id, 'I`M OK');
 });
 
-Boolean(process.env.LOG_ALL_MSGS) && bot.on('message', (msg) => console.log(msg));
+bot.on('message', (msg) => Boolean(process.env.LOG_ALL_MSGS) ?? console.log(msg));
 
 repl.start().context.bot = bot;
 

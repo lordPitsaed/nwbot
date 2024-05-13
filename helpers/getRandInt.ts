@@ -42,7 +42,7 @@ export const getRandInt = (min = 1, max = 100) =>
       if ((data as TRandomOrgErrorResponse).error) {
         throw new Error('[ERROR] RandomOrg responded with an error: ' + JSON.stringify(data));
       } else {
-        return (data as TRandomOrgSuccessResponse).result.random.data;
+        return (data as TRandomOrgSuccessResponse).result.random.data as number;
       }
     })
     .catch((err) => console.warn(err));
