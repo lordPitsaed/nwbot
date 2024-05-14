@@ -5,9 +5,12 @@ import { sortObj } from "./sortObj";
       let iter = 1;
       const sortedObj = sortObj(obj);
 
+      console.log(sortedObj)
+
       for (const user in sortedObj) {
-        message += `${iter}. ${user}: ${sortedObj[user]} \n`;
+        resMessage += `${iter}. ${user}: ${sortedObj[user]} \n`;
         iter++;
       }
+
       return resMessage
     }

@@ -64,7 +64,7 @@ export const iqMeterModule = () => {
     }
 
     if (msg.text?.toLowerCase() === 'айкутоп') {
-      bot.sendMessage(CHAT_ID, getTopFromObj(iqs, 'Топ умников на сегодня'));
+      bot.sendMessage(msg.chat.id, getTopFromObj(iqs, 'Топ умников на сегодня'));
     }
   });
 
@@ -83,9 +83,9 @@ export const iqMeterModule = () => {
   pbRule.minute = 0;
   pbRule.tz = 'Europe/Moscow';
   pbRule.date = 1;
-  schedule.scheduleJob(rule, () => {
-    fs.writeFileSync(IQ_PBS, '{}');
+  schedule.scheduleJob(pbRule, () => {
     iqsPbs = JSON.parse(fs.readFileSync(IQ_PBS, { encoding: 'utf-8' }));
     bot.sendMessage(CHAT_ID, getTopFromObj(iqsPbs, 'Топ умников за месяц'));
+    fs.writeFileSync(IQ_PBS, '{}');
   });
 };

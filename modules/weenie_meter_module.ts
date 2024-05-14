@@ -56,7 +56,7 @@ export const weenieMeterModule = () => {
     }
 
     if (msg.text?.toLowerCase() === 'писятоп') {
-      bot.sendMessage(CHAT_ID, getTopFromObj(weenies, 'Топ пись на сегодня'));
+      bot.sendMessage(msg.chat.id, getTopFromObj(weenies, 'Топ пись на сегодня'));
     }
   });
 
@@ -76,9 +76,9 @@ export const weenieMeterModule = () => {
   pbRule.minute = 0;
   pbRule.tz = 'Europe/Moscow';
   pbRule.date = 1;
-  schedule.scheduleJob(rule, () => {
-    fs.writeFileSync(WEENIES_PBS, '{}');
+  schedule.scheduleJob(pbRule, () => {
     weeniesPbs = JSON.parse(fs.readFileSync(WEENIES_PBS, { encoding: 'utf-8' }));
     bot.sendMessage(CHAT_ID, getTopFromObj(weeniesPbs, 'Топ пись за месяц'));
+    fs.writeFileSync(WEENIES_PBS, '{}');
   });
 };
