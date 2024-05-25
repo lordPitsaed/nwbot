@@ -16,8 +16,7 @@ export const prayForNwbButtonModule = () => {
         const randomIndex = await getRandInt(0, quotes.length);
         const randomQuote =
           quotes[
-            randomIndex ||
-              Math.floor(Math.random() * (quotes.length - 0 + 1)) + 0
+            randomIndex || Math.floor(Math.random() * (quotes.length - 1))
           ];
         bot.deleteMessage(msg.chat.id, msg.message_id);
         bot.sendMessage(msg.chat.id, randomQuote);
