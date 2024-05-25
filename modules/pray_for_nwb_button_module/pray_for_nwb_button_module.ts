@@ -10,7 +10,8 @@ export const prayForNwbButtonModule = () => {
   bot.on("text", async (msg) => {
     if (
       msg.text?.includes("/pray") ||
-      msg.text?.toLowerCase() === "pray for nwb"
+      msg.text?.toLowerCase() === "pray for nwb" ||
+      msg.text?.toLocaleLowerCase() === "pray"
     ) {
       if (!getTimeRemaining()) {
         const randomIndex = await getRandInt(0, quotes.length);
