@@ -19,7 +19,7 @@ export const prayForNwbButtonModule = () => {
       });
     }
 
-    if (msg.text === "PRAY FOR NWB") {
+    if (msg.text?.includes("/pray")) {
       if (!getTimeRemaining()) {
         const randomIndex = await getRandInt(0, quotes.length);
         const randomQuote =
