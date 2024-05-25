@@ -1,4 +1,3 @@
-import { text } from "stream/consumers";
 import { getRandInt } from "../../helpers";
 import { startTimeout } from "../../helpers/timers";
 import { bot } from "../../main";

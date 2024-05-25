@@ -3,7 +3,7 @@ import fs from "fs";
 import schedule from "node-schedule";
 import TelegramBot from "node-telegram-bot-api";
 import repl from "repl";
-import { BOT_TOKEN } from "./constants";
+import { envVars } from "./constants";
 import {
   alertsModule,
   iqMeterModule,
@@ -14,9 +14,7 @@ import { weenieMeterModule } from "./modules/weenie_meter_module";
 import { prayForNwbButtonModule } from "./modules/pray_for_nwb_button_module/pray_for_nwb_button_module";
 import { keyboardModule } from "./modules/keyobard_module";
 
-dotenv.config();
-
-export const bot = new TelegramBot(BOT_TOKEN || "", {
+export const bot = new TelegramBot(envVars.BOT_TOKEN || "", {
   polling: true,
 });
 
@@ -32,10 +30,7 @@ bot.onText(/\/ruok/, (msg) => {
   bot.sendMessage(msg.chat.id, "I`M OK");
 });
 
-bot.on(
-  "message",
-  (msg) => Boolean(process.env.LOG_ALL_MSGS) ?? console.log(msg)
-);
+bot.on("message", (msg) => Boolean(envVars.LOG_ALL) ?? console.log(msg));
 
 repl.start().context.bot = bot;
 

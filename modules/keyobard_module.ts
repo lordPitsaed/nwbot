@@ -1,12 +1,11 @@
 import TelegramBot from "node-telegram-bot-api";
 import { bot } from "../main";
 import fs from "fs";
-
-const KEYBOARD_MESSAGE = "./data_files/keyboard_message.json";
+import { envVars } from "../constants";
 
 export const keyboardModule = () => {
   let message: TelegramBot.Message = JSON.parse(
-    fs.readFileSync(KEYBOARD_MESSAGE, {
+    fs.readFileSync(envVars.KEYBOARD_MESSAGE, {
       encoding: "utf-8",
     })
   );
@@ -37,7 +36,7 @@ export const keyboardModule = () => {
         message = await bot.sendMessage(msg.chat.id, "ку", options);
       }
 
-      fs.writeFileSync(KEYBOARD_MESSAGE, JSON.stringify(message));
+      fs.writeFileSync(envVars.KEYBOARD_MESSAGE, JSON.stringify(message));
     }
   });
 };
