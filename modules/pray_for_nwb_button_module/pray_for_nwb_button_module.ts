@@ -1,3 +1,4 @@
+import { text } from "stream/consumers";
 import { getRandInt } from "../../helpers";
 import { startTimeout } from "../../helpers/timers";
 import { bot } from "../../main";
@@ -7,19 +8,10 @@ import { quotes } from "./quotes";
 export const prayForNwbButtonModule = () => {
   let getTimeRemaining = () => 0;
   bot.on("text", async (msg) => {
-    if (msg.text?.toLowerCase() === "бот ку") {
-      bot.sendMessage(msg.chat.id, "ку", {
-        reply_markup: {
-          keyboard: [[{ text: "PRAY FOR NWB" }]],
-          resize_keyboard: true,
-          one_time_keyboard: true,
-        },
-        message_thread_id: msg.message_thread_id,
-        reply_to_message_id: msg.message_id,
-      });
-    }
-
-    if (msg.text?.includes("/pray")) {
+    if (
+      msg.text?.includes("/pray") ||
+      msg.text?.toLowerCase() === "pray for nwb"
+    ) {
       if (!getTimeRemaining()) {
         const randomIndex = await getRandInt(0, quotes.length);
         const randomQuote =

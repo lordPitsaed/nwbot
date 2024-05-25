@@ -12,6 +12,7 @@ import {
 } from "./modules";
 import { weenieMeterModule } from "./modules/weenie_meter_module";
 import { prayForNwbButtonModule } from "./modules/pray_for_nwb_button_module/pray_for_nwb_button_module";
+import { keyboardModule } from "./modules/keyobard_module";
 
 dotenv.config();
 
@@ -25,6 +26,7 @@ weenieMeterModule();
 iqMeterModule();
 sigameRandomModule();
 prayForNwbButtonModule();
+keyboardModule();
 
 bot.onText(/\/ruok/, (msg) => {
   bot.sendMessage(msg.chat.id, "I`M OK");
