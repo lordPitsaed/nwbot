@@ -21,8 +21,9 @@ export const getPbModule = () => {
       bot
         .sendMessage(
           msg.chat.id,
-          `@${user} твои рекорды: пися - ${weeniesPbs[user]}, айку - ${iqPbs[user]} 
-        }`
+          `@${user} твои рекорды: 
+          пися - ${weeniesPbs[user]}, 
+          айку - ${iqPbs[user]}`
         )
         .then((sentMsg) => {
           setTimeout(
