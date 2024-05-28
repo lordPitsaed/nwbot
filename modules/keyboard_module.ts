@@ -20,6 +20,7 @@ export const keyboardModule = () => {
             [{ text: "PRAY FOR NWB" }],
             [{ text: "пися" }, { text: "писятоп" }],
             [{ text: "айку" }, { text: "айкутоп" }],
+            [{ text: "РЕКОРДЫ" }],
           ],
           resize_keyboard: true,
           one_time_keyboard: true,
