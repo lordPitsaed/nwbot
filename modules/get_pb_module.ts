@@ -18,11 +18,22 @@ export const getPbModule = () => {
       msg.text?.toLowerCase() === "pb" ||
       msg.text?.toLowerCase() === "рекорды"
     ) {
-      bot.sendMessage(
-        msg.chat.id,
-        `@${user} твои рекорды: пися - ${weeniesPbs[user]}, айку - ${iqPbs[user]} 
+      bot
+        .sendMessage(
+          msg.chat.id,
+          `@${user} твои рекорды: пися - ${weeniesPbs[user]}, айку - ${iqPbs[user]} 
         }`
-      );
+        )
+        .then((sentMsg) => {
+          setTimeout(
+            () => bot.deleteMessage(msg.chat.id, msg.message_id),
+            5000
+          );
+          setTimeout(
+            () => bot.deleteMessage(msg.chat.id, sentMsg.message_id),
+            15000
+          );
+        });
     }
   });
 };
