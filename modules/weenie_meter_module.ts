@@ -101,5 +101,8 @@ export const weenieMeterModule = () => {
       getTopFromObj(weeniesPbs, "Топ пись за месяц")
     );
     fs.writeFileSync(envVars.WEENIES_PBS, "{}");
+    weeniesPbs = JSON.parse(
+      fs.readFileSync(envVars.WEENIES_PBS, { encoding: "utf-8" })
+    );
   });
 };

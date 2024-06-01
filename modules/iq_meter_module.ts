@@ -104,5 +104,6 @@ export const iqMeterModule = () => {
       getTopFromObj(iqsPbs, "Топ умников за месяц")
     );
     fs.writeFileSync(envVars.IQ_PBS, "{}");
+    iqsPbs = JSON.parse(fs.readFileSync(envVars.IQ_PBS, { encoding: "utf-8" }));
   });
 };
