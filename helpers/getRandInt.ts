@@ -36,21 +36,18 @@ export const getRandInt = (min = 1, max = 100) =>
     method: "POST",
   })
     .then((res) => {
-      return res.json() as Promise<
-        TRandomOrgSuccessResponse | TRandomOrgErrorResponse
-      >;
-    })
-    .catch((err) => {
-      return {
-        result: {
-          random: { data: [Math.floor(Math.random() * (max - min + 1) + min)] },
-        },
-      };
+      return res.json() as Promise<TRandomOrgSuccessResponse | TRandomOrgErrorResponse>;
     })
     .then((data) => {
       if ((data as TRandomOrgErrorResponse).error) {
-        throw new Error("[ERROR] RandomOrg responded with an error: " + data);
+        throw new Error(
+          "[ERROR] RandomOrg responded with an error: " + JSON.stringify((data as TRandomOrgErrorResponse).error)
+        );
       } else {
         return (data as TRandomOrgSuccessResponse).result.random.data as number;
       }
+    })
+    .catch((err) => {
+      console.error(err);
+      return Math.floor(Math.random() * (max - min + 1) + min);
     });

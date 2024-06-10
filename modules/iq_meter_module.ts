@@ -9,27 +9,16 @@ type TIqMap = {
 };
 
 export const iqMeterModule = () => {
-  let iqs: TIqMap = JSON.parse(
-    fs.readFileSync(envVars.IQ, { encoding: "utf-8" })
-  );
-  let iqsPbs: TIqMap = JSON.parse(
-    fs.readFileSync(envVars.IQ_PBS, { encoding: "utf-8" })
-  );
+  let iqs: TIqMap = JSON.parse(fs.readFileSync(envVars.IQ, { encoding: "utf-8" }));
+  let iqsPbs: TIqMap = JSON.parse(fs.readFileSync(envVars.IQ_PBS, { encoding: "utf-8" }));
 
   bot.on("text", async (msg) => {
-    if (
-      msg.text?.toLowerCase() === "айку" ||
-      msg.text?.toLowerCase() === "iq"
-    ) {
+    if (msg.text?.toLowerCase() === "айку" || msg.text?.toLowerCase() === "iq") {
       const user = msg.from?.username || msg.from?.first_name || "";
 
       if (!iqs.hasOwnProperty(user)) {
         const randomizedRandom = Math.random() * 1000 < 995;
-        const iq = (
-          randomizedRandom
-            ? await getRandInt(60, 150)
-            : await getRandInt(160, 420)
-        )[0];
+        const iq = (randomizedRandom ? await getRandInt(60, 150) : await getRandInt(160, 420))[0];
         const isPb = iq > (iqsPbs[user] || 0);
 
         if (isPb) {
@@ -40,34 +29,21 @@ export const iqMeterModule = () => {
 
         iqs[user] = iq;
         if (iqs[user] <= 5) {
-          bot.sendMessage(
-            msg.chat.id,
-            `Жесть... тик-токер в чате... ${iq}п.` + pbMessage
-          );
+          bot.sendMessage(msg.chat.id, `Жесть... тик-токер в чате... ${iq}п.` + pbMessage);
         } else if (iqs[user] <= 70) {
           bot.sendMessage(
             msg.chat.id,
-            `Ваш интеллект как у петикантропа, надеюсь с пенисом вам повезло больше. ${iq}п.` +
-              pbMessage
+            `Ваш интеллект как у петикантропа, надеюсь с пенисом вам повезло больше. ${iq}п.` + pbMessage
           );
         } else if (iqs[user] <= 100) {
           bot.sendMessage(msg.chat.id, `Норм ${iq}п.` + pbMessage);
         } else if (iqs[user] <= 150) {
-          bot.sendMessage(
-            msg.chat.id,
-            `Альберт Ынштейн в чате. ${iq}п.` + pbMessage
-          );
+          bot.sendMessage(msg.chat.id, `Альберт Ынштейн в чате. ${iq}п.` + pbMessage);
         } else if (iqs[user] > 160) {
-          bot.sendMessage(
-            msg.chat.id,
-            `Типичный пользователь ВК видео? ${iq}п.` + pbMessage
-          );
+          bot.sendMessage(msg.chat.id, `Типичный пользователь ВК видео? ${iq}п.` + pbMessage);
         }
       } else {
-        bot.sendMessage(
-          msg.chat.id,
-          `А ну-ка нах! Ваш интеллект уже учтен - ${iqs[user]}п.`
-        );
+        bot.sendMessage(msg.chat.id, `А ну-ка нах! Ваш интеллект уже учтен - ${iqs[user]}п.`);
       }
 
       fs.writeFileSync(envVars.IQ, JSON.stringify(iqs));
@@ -75,10 +51,7 @@ export const iqMeterModule = () => {
     }
 
     if (msg.text?.toLowerCase() === "айкутоп") {
-      bot.sendMessage(
-        msg.chat.id,
-        getTopFromObj(iqs, "Топ умников на сегодня")
-      );
+      bot.sendMessage(msg.chat.id, getTopFromObj(iqs, "Топ умников на сегодня"));
     }
   });
 
@@ -99,10 +72,7 @@ export const iqMeterModule = () => {
   pbRule.date = 1;
   schedule.scheduleJob(pbRule, () => {
     iqsPbs = JSON.parse(fs.readFileSync(envVars.IQ_PBS, { encoding: "utf-8" }));
-    bot.sendMessage(
-      envVars.CHAT_ID,
-      getTopFromObj(iqsPbs, "Топ умников за месяц")
-    );
+    bot.sendMessage(envVars.CHAT_ID, getTopFromObj(iqsPbs, "Топ умников за месяц"));
     fs.writeFileSync(envVars.IQ_PBS, "{}");
     iqsPbs = JSON.parse(fs.readFileSync(envVars.IQ_PBS, { encoding: "utf-8" }));
   });

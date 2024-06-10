@@ -22,4 +22,5 @@ export const envVars = {
   ALERT_TOPIC: process.env.BOT_NOTIFICATIONS_TOPIC || "",
   CHAT_ID: process.env.CHAT_ID || "",
   LOG_ALL: process.env.LOG_ALL_MSGS || "false",
+  GEOSCORE: process.env.FILE_GEOSCORE || "",
 };

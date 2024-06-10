@@ -1,19 +1,14 @@
-import dotenv from "dotenv";
-import fs from "fs";
 import schedule from "node-schedule";
 import TelegramBot from "node-telegram-bot-api";
 import repl from "repl";
 import { envVars } from "./constants";
-import {
-  alertsModule,
-  iqMeterModule,
-  sigameRandomModule,
-  userRememberingModule,
-} from "./modules";
+import { alertsModule, iqMeterModule, sigameRandomModule, userRememberingModule } from "./modules";
 import { weenieMeterModule } from "./modules/weenie_meter_module";
 import { prayForNwbButtonModule } from "./modules/pray_for_nwb_button_module/pray_for_nwb_button_module";
 import { keyboardModule } from "./modules/keyboard_module";
 import { getPbModule } from "./modules/get_pb_module";
+import { geogessrModule } from "./modules/geogssr_module";
+import fs from "fs";
 
 export const bot = new TelegramBot(envVars.BOT_TOKEN || "", {
   polling: true,
@@ -27,15 +22,31 @@ sigameRandomModule();
 prayForNwbButtonModule();
 keyboardModule();
 getPbModule();
+geogessrModule();
 
 bot.onText(/\/ruok/, (msg) => {
   bot.sendMessage(msg.chat.id, "I`M OK");
 });
 
-bot.on("message", (msg) => Boolean(envVars.LOG_ALL) ?? console.log(msg));
+bot.on("message", (msg) => envVars.LOG_ALL === "true" && console.log(msg));
 
-repl.start().context.bot = bot;
+const handleExit = async () => {
+  console.log("[EXIT] Shutting down bot");
+  await bot.close();
+  await bot.stopPolling({ cancel: true });
+  console.log("[EXIT] Bot shut down");
+  await schedule.gracefulShutdown();
+  process.exit();
+};
 
-process.on("SIGINT", function () {
-  schedule.gracefulShutdown().then(() => process.exit(0));
+repl.start().context.nwbot = { bot, exit: handleExit };
+
+process.on("beforeExit", async function () {
+  console.log("[EXIT] Exiting, schedules graceful shutdown.");
+  await schedule.gracefulShutdown();
+  console.log("[EXIT] Schedules shut down");
+});
+
+process.on("SIGINT", () => {
+  schedule.gracefulShutdown().then(process.exit());
 });

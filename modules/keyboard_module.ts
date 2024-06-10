@@ -21,6 +21,7 @@ export const keyboardModule = () => {
             [{ text: "пися" }, { text: "писятоп" }],
             [{ text: "айку" }, { text: "айкутоп" }],
             [{ text: "РЕКОРДЫ" }],
+            [{ text: "GEOGUESSER-ish" }, { text: "GeoBalance" }, { text: "GeoTop[poka net]" }],
           ],
           resize_keyboard: true,
           one_time_keyboard: true,

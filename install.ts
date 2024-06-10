@@ -12,16 +12,13 @@ const filePaths = Object.keys(process.env).reduce((accArr, key) => {
 }, [] as string[]);
 
 if (process.env.DEV_MODE === "false") {
-  exec(
-    "git reset --hard && git pull && git log -1 && npm i",
-    (error, stdout) => {
-      if (error) {
-        console.log(`[ERROR] in git ${error}`);
-      }
-
-      console.log(stdout);
+  exec("git reset --hard && git pull && git log -1 && npm i", (error, stdout) => {
+    if (error) {
+      console.log(`[ERROR] in git ${error}`);
     }
-  );
+
+    console.log(stdout);
+  });
 }
 
 if (fs.existsSync(process.env.DATA_FILES_DIR as string)) {

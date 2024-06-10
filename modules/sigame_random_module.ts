@@ -6,8 +6,7 @@ import { bot } from "../main";
 export const sigameRandomModule = async () => {
   const cachedSiGamePacks = await getSiGamePacks();
   const packsArr = cachedSiGamePacks?.packs || [];
-  const getRandomPack = () =>
-    packsArr[Math.floor(Math.random() * packsArr?.length)];
+  const getRandomPack = () => packsArr[Math.floor(Math.random() * packsArr?.length)];
 
   bot.on("inline_query", (query) => {
     if (query.query === "пак") {
@@ -61,24 +60,6 @@ export const sigameRandomModule = async () => {
     if (cbQuery.data?.includes("gen_new_pack")) {
       const randomPack = getRandomPack();
 
-      const queryResult: InlineQueryResultArticle = {
-        type: "article",
-        id: "loading_id",
-        title:
-          "Found pack: " +
-          `[Name: ${randomPack.package.name} | Rounds count: ${randomPack.package.rounds.length} | Date: ${randomPack.package.date} | Downloads: ${randomPack.package.info.downloads_count}]`,
-        input_message_content: {
-          message_text: `[Name: ${randomPack.package.name} | Rounds count: ${randomPack.package.rounds.length} | Date: ${randomPack.package.date} | Downloads: ${randomPack.info.downloads_count}]`,
-        },
-        reply_markup: {
-          inline_keyboard: [
-            [
-              { text: "Download", url: randomPack.info.url },
-              { text: "New", callback_data: "gen_new_pack" },
-            ],
-          ],
-        },
-      };
       bot.editMessageText(
         "Found pack: " +
           `[Name: ${randomPack.package.name} | Rounds count: ${randomPack.package.rounds.length} | Date: ${randomPack.package.date} | Downloads: ${randomPack.info.downloads_count}]`,
