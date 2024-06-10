@@ -44,7 +44,8 @@ export const geogessrModule = () => {
                 type: "photo",
                 media: randomImage.url,
                 has_spoiler: true,
-                caption: "Придумал",
+                caption:
+                  "Придумал\n пишем на русском языке название страны или любой строки которая может попасться в адресе, английский тоже роляет, но ультра-редко",
               },
               { chat_id: messageToReply.chat.id, message_id: messageToReply.message_id, reply_markup }
             )
