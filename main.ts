@@ -28,7 +28,7 @@ bot.onText(/\/ruok/, (msg) => {
   bot.sendMessage(msg.chat.id, "I`M OK");
 });
 
-bot.on("message", (msg) => envVars.LOG_ALL === "true" && console.log(msg));
+bot.on("message", (msg) => envVars.LOG_ALL && console.log(msg));
 
 const handleExit = async () => {
   console.log("[EXIT] Shutting down bot");

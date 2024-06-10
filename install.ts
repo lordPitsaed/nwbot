@@ -11,7 +11,7 @@ const filePaths = Object.keys(process.env).reduce((accArr, key) => {
   return accArr;
 }, [] as string[]);
 
-if (process.env.DEV_MODE === "false") {
+if (!process.env.DEV_MODE) {
   exec("git reset --hard && git pull && git log -1 && npm i", (error, stdout) => {
     if (error) {
       console.log(`[ERROR] in git ${error}`);
