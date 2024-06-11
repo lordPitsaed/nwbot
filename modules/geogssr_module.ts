@@ -145,7 +145,8 @@ export const geogessrModule = () => {
     if (msg.text === "GeoBalance") {
       bot.sendMessage(
         msg.chat.id,
-        `@${msg.from?.username} Мда, негусто ${geoscore[msg.from?.username || msg.from?.first_name || ""] || 0}`
+        `@${msg.from?.username} Мда, негусто ${geoscore[msg.from?.username || msg.from?.first_name || ""] || 0}`,
+        { reply_to_message_id: msg.message_id }
       );
     }
   });
