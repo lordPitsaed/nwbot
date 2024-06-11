@@ -83,12 +83,22 @@ export const geogessrModule = () => {
             );
           };
 
+          const guessed: string[] = [];
+
           bot.onReplyToMessage(messageToReply.chat.id, messageToReply.message_id, (repliedMessage) => {
             const userGeoScore = geoscore[repliedMessage.from?.username || repliedMessage.from?.first_name || ""];
             if (!!geoGssr?.randomImage) {
               if (checkAnswer(repliedMessage, "En") || checkAnswer(repliedMessage, "Ru")) {
-                geoscore[repliedMessage.from?.username || repliedMessage.from?.first_name || ""] = userGeoScore + 25;
-                sendTempMessage(repliedMessage, `@${repliedMessage.from?.username} угадал, +25 geocoin`);
+                if (
+                  guessed.includes(repliedMessage.from?.username || "") ||
+                  guessed.includes(repliedMessage.from?.first_name || "")
+                ) {
+                  sendTempMessage(repliedMessage, `Тю блять арбузер ебаный @${repliedMessage.from?.username}`);
+                } else {
+                  geoscore[repliedMessage.from?.username || repliedMessage.from?.first_name || ""] = userGeoScore + 25;
+                  sendTempMessage(repliedMessage, `@${repliedMessage.from?.username} угадал, +25 geocoin`);
+                  guessed.push(repliedMessage.from?.username || repliedMessage.from?.first_name || "");
+                }
               } else {
                 geoscore[repliedMessage.from?.username || repliedMessage.from?.first_name || ""] = userGeoScore - 5;
 
