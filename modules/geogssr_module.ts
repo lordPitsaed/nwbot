@@ -62,15 +62,12 @@ export const geogessrModule = () => {
                   type: "photo",
                   media: randomImage.url,
                   has_spoiler: true,
+                  caption:
+                    "Придумал\nНадо угадать какая строка может попасться в адресе(в т.ч. частичная строка)\nrus/eng",
                 },
                 { chat_id: messageToReply.chat.id, message_id: messageToReply.message_id, reply_markup }
               )
               .then(() => startTimeout(300000));
-
-            bot.editMessageCaption(
-              "Придумал\nНадо угадать какая строка может попасться в адресе(в т.ч. частичная строка)\nrus/eng",
-              { message_id: messageToReply.message_id, chat_id: messageToReply.chat.id }
-            );
 
             console.log("[LOG] GeoGuesser Answer", randomImage);
 
@@ -111,7 +108,7 @@ export const geogessrModule = () => {
               } else {
                 geoscore[repliedMessage.from?.username || repliedMessage.from?.first_name || ""] = userGeoScore - 5;
                 wrongVariants.push(repliedMessage.text || "");
-                bot.editMessageCaption(messageToReply.caption + `\n ${wrongVariants.join("\n")}`, {
+                bot.editMessageCaption(repliedMessage.reply_to_message?.caption + `\n ${wrongVariants.join("\n")}`, {
                   chat_id: messageToReply.chat.id,
                   message_id: messageToReply.message_id,
                 });
