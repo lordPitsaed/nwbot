@@ -101,19 +101,31 @@ export const geogessrModule = () => {
                 ) {
                   sendTempMessage(repliedMessage, `Тю блять арбузер ебаный @${repliedMessage.from?.username}`);
                 } else {
-                  geoscore[repliedMessage.from?.username || repliedMessage.from?.first_name || ""] = userGeoScore + 100;
-                  sendTempMessage(repliedMessage, `@${repliedMessage.from?.username} угадал, +25 geocoin`);
+                  geoscore[repliedMessage.from?.username || repliedMessage.from?.first_name || ""] = userGeoScore + 95;
+                  sendTempMessage(repliedMessage, `@${repliedMessage.from?.username} угадал, +95 geocoin`);
                   guessed.push(repliedMessage.from?.username || repliedMessage.from?.first_name || "");
+                  bot.editMessageCaption(
+                    repliedMessage.reply_to_message?.caption + `\nОШИБКИ:${wrongVariants.join("\n")}`,
+                    {
+                      chat_id: messageToReply.chat.id,
+                      message_id: messageToReply.message_id,
+                    }
+                  );
                 }
               } else {
                 geoscore[repliedMessage.from?.username || repliedMessage.from?.first_name || ""] = userGeoScore - 5;
                 wrongVariants.push(repliedMessage.text || "");
-                bot.editMessageCaption(repliedMessage.reply_to_message?.caption + `\n ${wrongVariants.join("\n")}`, {
-                  chat_id: messageToReply.chat.id,
-                  message_id: messageToReply.message_id,
-                });
+
                 sendTempMessage(repliedMessage, `@${repliedMessage.from?.username} не угадал, -5 geocoin`);
               }
+              bot.editMessageCaption(
+                "Придумал\nНадо угадать какая строка может попасться в адресе(в т.ч. частичная строка)\nЯзыки: rus/eng\n" +
+                  `Угадали: ${guessed.join("\n")}. Ошибки: ${wrongVariants.join("\n")}`,
+                {
+                  chat_id: messageToReply.chat.id,
+                  message_id: messageToReply.message_id,
+                }
+              );
               setTimeout(() => bot.deleteMessage(repliedMessage.chat.id, repliedMessage.message_id), 4000);
             }
 
