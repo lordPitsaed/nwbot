@@ -119,8 +119,8 @@ export const geogessrModule = () => {
                 sendTempMessage(repliedMessage, `@${repliedMessage.from?.username} не угадал, -5 geocoin`);
               }
               bot.editMessageCaption(
-                "Придумал\nНадо угадать какая строка может попасться в адресе(в т.ч. частичная строка). Языки: rus/eng\n" +
-                  `Угадали: ${guessed.join("\n")}.\n Ошибки: ${wrongVariants.join("\n")}`,
+                "Придумал\nНадо угадать какая строка может попасться в адресе(в т.ч. частичная строка). Языки: rus/eng\n\n" +
+                  `Угадали:\n${guessed.join("\n ")}\nОшибки:\n${wrongVariants.join("\n")}`,
                 {
                   chat_id: messageToReply.chat.id,
                   message_id: messageToReply.message_id,
