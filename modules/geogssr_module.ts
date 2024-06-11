@@ -76,17 +76,11 @@ export const geogessrModule = () => {
 
           let geoGssr = await handleGeoGssr(messageToReply);
 
-          //TODO: MAKE SOMETHING BETTER THIS IMPL SUCKS ASS
           const checkAnswer = (repliedMessage: TelegramBot.Message, lang: "Ru" | "En") => {
             if ("location" in repliedMessage) {
               const boundingBox = geoGssr.randomImage.locationEn.boundingbox;
               const answer = repliedMessage.location as TelegramBot.Location;
-              console.log(
-                answer.latitude >= +boundingBox[0],
-                answer.latitude <= +boundingBox[1],
-                answer.longitude >= +boundingBox[2],
-                answer.longitude <= +boundingBox[3]
-              );
+              //TODO: higher rewards for more precise location
               return (
                 answer.latitude >= +boundingBox[0] &&
                 answer.latitude <= +boundingBox[1] &&
