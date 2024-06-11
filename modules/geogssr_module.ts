@@ -121,7 +121,12 @@ export const geogessrModule = () => {
                   sendTempMessage(repliedMessage, `Тю блять арбузер ебаный @${repliedMessage.from?.username}`);
                 } else {
                   geoscore[repliedMessage.from?.username || repliedMessage.from?.first_name || ""] = userGeoScore + 95;
-                  sendTempMessage(repliedMessage, `@${repliedMessage.from?.username} угадал, +95 geocoin`);
+                  sendTempMessage(
+                    repliedMessage,
+                    `@${repliedMessage.from?.username} угадал, +95 geocoin, вот тебе ссилка на [локу](https://www.openstreetmap.org/search?query=${geoGssr.randomImage.locationEn.lat}}%20${geoGssr.randomImage.locationEn.lon})`,
+                    { parse_mode: "MarkdownV2" },
+                    15000
+                  );
                   guessed.push(repliedMessage.from?.username || repliedMessage.from?.first_name || "");
                 }
               } else {
