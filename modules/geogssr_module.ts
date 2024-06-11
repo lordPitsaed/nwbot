@@ -10,115 +10,136 @@ import { sendErrorMessage } from "../helpers/sendErrorMessage";
 
 export const geogessrModule = () => {
   let geoscore = JSON.parse(fs.readFileSync(envVars.GEOSCORE, { encoding: "utf-8" }));
+  const startupGeomessage: TelegramBot.Message | {} = JSON.parse(
+    fs.readFileSync(envVars.GEOMESSAGE, { encoding: "utf-8" })
+  );
+  if ("chat" in startupGeomessage) {
+    bot.deleteMessage(startupGeomessage.chat.id, startupGeomessage.message_id);
+    fs.writeFileSync(envVars.GEOMESSAGE, "{}");
+  }
 
   bot.on("text", async (msg) => {
-    if (msg.text === "GEOGUESSER-ish") {
-      const messageToReply = await bot.sendPhoto(
-        msg.chat.id,
-        "https://images.fineartamerica.com/images/artworkimages/mediumlarge/2/thinking-cat-douglas-sacha.jpg",
-        { caption: "Думою..." }
-      );
-      try {
-        const handleGeoGssr = async (messageToReply: TelegramBot.Message) => {
-          const randomImage = await getRndGeogssrImage();
+    if (msg.text === "GeoGuesser") {
+      setTimeout(() => bot.deleteMessage(msg.chat.id, msg.message_id), 4000);
+      let geomessage: TelegramBot.Message | {} = JSON.parse(fs.readFileSync(envVars.GEOMESSAGE, { encoding: "utf-8" }));
 
-          if (randomImage?.lat === undefined || randomImage.lon === undefined || randomImage.url === undefined) {
-            throw new Error();
-          }
+      if ("chat" in geomessage) {
+        sendTempMessage(geomessage, "Уже всё есть, пджи", {
+          message_thread_id: geomessage.message_thread_id,
+        });
+      } else {
+        const messageToReply = await bot.sendPhoto(
+          msg.chat.id,
+          "https://images.fineartamerica.com/images/artworkimages/mediumlarge/2/thinking-cat-douglas-sacha.jpg",
+          { caption: "Думою...", message_thread_id: msg.message_thread_id }
+        );
 
-          const reply_markup = {
-            inline_keyboard: [
-              [
-                { text: "go next (cd 30min)", callback_data: "get_new_geo_image" },
-                {
-                  text: "i'm dumb (-100 geocoin)",
-                  callback_data: "skip_geo_image",
-                },
+        fs.writeFileSync(envVars.GEOMESSAGE, JSON.stringify(messageToReply));
+
+        try {
+          const handleGeoGssr = async (messageToReply: TelegramBot.Message) => {
+            const randomImage = await getRndGeogssrImage();
+
+            if (randomImage?.lat === undefined || randomImage.lon === undefined || randomImage.url === undefined) {
+              throw new Error();
+            }
+
+            const reply_markup = {
+              inline_keyboard: [
+                [
+                  { text: "go next (cd 5min)", callback_data: "get_new_geo_image" },
+                  {
+                    text: "i'm dumb (-100 geocoin)",
+                    callback_data: "skip_geo_image",
+                  },
+                ],
               ],
-            ],
+            };
+
+            const getCoolDown = bot
+              .editMessageMedia(
+                {
+                  type: "photo",
+                  media: randomImage.url,
+                  has_spoiler: true,
+                  caption:
+                    "Придумал\n пишем на русском языке название страны или любой строки которая может попасться в адресе, английский тоже роляет, но ультра-редко",
+                },
+                { chat_id: messageToReply.chat.id, message_id: messageToReply.message_id, reply_markup }
+              )
+              .then(() => startTimeout(300000));
+            return { getCoolDown: await getCoolDown, randomImage: randomImage };
           };
 
-          const getCoolDown = bot
-            .editMessageMedia(
-              {
-                type: "photo",
-                media: randomImage.url,
-                has_spoiler: true,
-                caption:
-                  "Придумал\n пишем на русском языке название страны или любой строки которая может попасться в адресе, английский тоже роляет, но ультра-редко",
-              },
-              { chat_id: messageToReply.chat.id, message_id: messageToReply.message_id, reply_markup }
-            )
-            .then(() => startTimeout(1800000));
-          return { getCoolDown: await getCoolDown, randomImage: randomImage };
-        };
+          const geoGssr = await handleGeoGssr(messageToReply);
 
-        const geoGssr = await handleGeoGssr(messageToReply);
+          const checkAnswer = (repliedMessage: TelegramBot.Message) => {
+            const answer = repliedMessage.text?.toLowerCase() || "";
+            const hint = geoGssr.randomImage.location;
+            return (
+              hint.display_name.toLowerCase().includes(answer) ||
+              hint.name.toLowerCase().includes(answer) ||
+              hint.address.country.toLowerCase().includes(answer)
+            );
+          };
 
-        bot.onReplyToMessage(messageToReply.chat.id, messageToReply.message_id, (repliedMessage) => {
-          const userGeoScore = geoscore[repliedMessage.from?.username || repliedMessage.from?.first_name || ""];
-          if (!!geoGssr?.randomImage) {
-            if (
-              geoGssr.randomImage?.location.display_name
-                .toLowerCase()
-                .includes(repliedMessage.text?.toLowerCase() || "")
-            ) {
-              geoscore[repliedMessage.from?.username || repliedMessage.from?.first_name || ""] = userGeoScore + 25;
-              sendTempMessage(repliedMessage.chat.id, `@${repliedMessage.from?.username} угадал, +25 geocoin`, 4000);
-            } else {
-              geoscore[repliedMessage.from?.username || repliedMessage.from?.first_name || ""] = userGeoScore - 5;
+          bot.onReplyToMessage(messageToReply.chat.id, messageToReply.message_id, (repliedMessage) => {
+            const userGeoScore = geoscore[repliedMessage.from?.username || repliedMessage.from?.first_name || ""];
+            if (!!geoGssr?.randomImage) {
+              if (checkAnswer(repliedMessage)) {
+                geoscore[repliedMessage.from?.username || repliedMessage.from?.first_name || ""] = userGeoScore + 25;
+                sendTempMessage(repliedMessage, `@${repliedMessage.from?.username} угадал, +25 geocoin`);
+              } else {
+                geoscore[repliedMessage.from?.username || repliedMessage.from?.first_name || ""] = userGeoScore - 5;
 
-              sendTempMessage(repliedMessage.chat.id, `@${repliedMessage.from?.username} не угадал, -5 geocoin`, 4000);
+                sendTempMessage(repliedMessage, `@${repliedMessage.from?.username} не угадал, -5 geocoin`);
+              }
+              setTimeout(() => bot.deleteMessage(repliedMessage.chat.id, repliedMessage.message_id), 4000);
             }
-            setTimeout(() => bot.deleteMessage(repliedMessage.chat.id, repliedMessage.message_id), 4000);
-          }
 
-          fs.writeFileSync(envVars.GEOSCORE, JSON.stringify(geoscore));
-        });
+            fs.writeFileSync(envVars.GEOSCORE, JSON.stringify(geoscore));
+          });
 
-        bot.on("callback_query", async (query) => {
-          if (query.data === "get_new_geo_image" && !!geoGssr?.getCoolDown) {
-            if (geoGssr.getCoolDown() > 0) {
-              console.log(query);
-              sendTempMessage(
-                query.message?.chat.id || msg.chat.id,
-                `Ждем кул довн, ещё ${geoGssr.getCoolDown()}`,
-                4000
-              );
-            } else {
-              handleGeoGssr(messageToReply);
+          bot.on("callback_query", async (query) => {
+            if (query.data === "get_new_geo_image" && !!geoGssr?.getCoolDown) {
+              if (geoGssr.getCoolDown() > 0) {
+                sendTempMessage(query.message || msg, `Ждем кул довн, ещё ${geoGssr.getCoolDown() / 1000} сек`);
+              } else {
+                handleGeoGssr(messageToReply);
+              }
             }
-          }
 
-          if (query.data === "skip_geo_image") {
-            if (geoscore[query.from.username || query.from.first_name] > 100) {
-              sendTempMessage(
-                query.message?.chat.id || msg.chat.id,
-                "Haha dumb, whatever. -100 geocoins, get gud.",
-                4000
-              );
-              geoscore[query.from.username || query.from.first_name] -= 100;
+            if (query.data === "skip_geo_image") {
+              if (geoscore[query.from.username || query.from.first_name] > 100) {
+                sendTempMessage(
+                  query.message || msg,
+                  `Haha dumb, whatever. -100 geocoins, get gud.\n${geoGssr.randomImage.location.display_name}`,
+                  {},
+                  10000
+                );
+                geoscore[query.from.username || query.from.first_name] -= 100;
 
-              handleGeoGssr(messageToReply);
+                handleGeoGssr(messageToReply);
 
-              fs.writeFileSync(envVars.GEOSCORE, JSON.stringify(geoscore));
-            } else {
-              sendTempMessage(query.message?.chat.id || msg.chat.id, "Man, u're broke ass.", 4000);
+                fs.writeFileSync(envVars.GEOSCORE, JSON.stringify(geoscore));
+              } else {
+                sendTempMessage(query.message || msg, "Man, u're broke ass.");
+              }
             }
-          }
-        });
-      } catch (e) {
-        console.log("[ERROR] getRndGeogssrImage error", e);
-        return sendErrorMessage(msg.chat.id);
-      }
-
-      process.on("beforeExit", async function () {
-        if (messageToReply) {
-          console.log("[EXIT] Exiting, deleting geogssr message.");
-          await bot.deleteMessage(messageToReply.chat.id, messageToReply.message_id);
-          console.log("[EXIT] Deleted geogssr message");
+          });
+        } catch (e) {
+          console.log("[ERROR] getRndGeogssrImage error", e);
+          return sendErrorMessage(msg.chat.id);
         }
-      });
+
+        process.on("beforeExit", async function () {
+          if (messageToReply) {
+            console.log("[EXIT] Exiting, deleting geogssr message.");
+            await bot.deleteMessage(messageToReply.chat.id, messageToReply.message_id);
+            console.log("[EXIT] Deleted geogssr message");
+          }
+        });
+      }
     }
 
     if (msg.text === "GeoBalance") {

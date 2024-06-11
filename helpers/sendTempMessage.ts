@@ -1,8 +1,13 @@
 import TelegramBot from "node-telegram-bot-api";
 import { bot } from "../main";
 
-export const sendTempMessage = (chatId: number, message: string, delay: number) => {
+export function sendTempMessage(
+  msg: TelegramBot.Message,
+  message: string,
+  options?: TelegramBot.SendMessageOptions,
+  delay = 4000
+) {
   return bot
-    .sendMessage(chatId, message)
+    .sendMessage(msg.chat.id, message, { ...options, message_thread_id: msg.message_thread_id })
     .then((msg) => setTimeout(() => bot.deleteMessage(msg.chat.id, msg.message_id), delay));
-};
+}

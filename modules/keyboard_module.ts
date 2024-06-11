@@ -14,6 +14,8 @@ export const keyboardModule = () => {
       if (message.hasOwnProperty("chat") && message.chat.id === msg.chat.id) {
         bot.deleteMessage(message.chat.id, message.message_id);
       }
+      setTimeout(() => bot.deleteMessage(msg.chat.id, msg.message_id), 5000);
+
       const options = {
         reply_markup: {
           keyboard: [
@@ -21,7 +23,7 @@ export const keyboardModule = () => {
             [{ text: "пися" }, { text: "писятоп" }],
             [{ text: "айку" }, { text: "айкутоп" }],
             [{ text: "РЕКОРДЫ" }],
-            [{ text: "GEOGUESSER-ish" }, { text: "GeoBalance" }, { text: "GeoTop[poka net]" }],
+            [{ text: "GeoGuesser" }, { text: "GeoBalance" }, { text: "GeoTop[poka net]" }],
           ],
           resize_keyboard: true,
           one_time_keyboard: true,

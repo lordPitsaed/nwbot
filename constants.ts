@@ -5,9 +5,7 @@ dotenv.config();
 
 const USER_IDS_FILE = process.env.FILE_REMEMBERED_USER_IDS as string;
 
-export const userIds: string[] = JSON.parse(
-  fs.readFileSync(USER_IDS_FILE, { encoding: "utf-8" })
-).userIds;
+export const userIds: string[] = JSON.parse(fs.readFileSync(USER_IDS_FILE, { encoding: "utf-8" })).userIds;
 
 export const envVars = {
   IQ_PBS: process.env.FILE_IQ_PBS || "",
@@ -23,4 +21,5 @@ export const envVars = {
   CHAT_ID: process.env.CHAT_ID || "",
   LOG_ALL: process.env.LOG_ALL_MSGS || "false",
   GEOSCORE: process.env.FILE_GEOSCORE || "",
+  GEOMESSAGE: process.env.FILE_GEOMESSAGE || "",
 };
