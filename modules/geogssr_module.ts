@@ -104,7 +104,7 @@ export const geogessrModule = () => {
               } else {
                 geoscore[repliedMessage.from?.username || repliedMessage.from?.first_name || ""] = userGeoScore - 5;
                 wrongVariants.push(repliedMessage.text || "");
-                bot.editMessageCaption(messageToReply.text + `\n ${wrongVariants.join("\n")}`, {
+                bot.editMessageCaption(messageToReply.caption + `\n ${wrongVariants.join("\n")}`, {
                   chat_id: messageToReply.chat.id,
                   message_id: messageToReply.message_id,
                 });
