@@ -104,13 +104,6 @@ export const geogessrModule = () => {
                   geoscore[repliedMessage.from?.username || repliedMessage.from?.first_name || ""] = userGeoScore + 95;
                   sendTempMessage(repliedMessage, `@${repliedMessage.from?.username} угадал, +95 geocoin`);
                   guessed.push(repliedMessage.from?.username || repliedMessage.from?.first_name || "");
-                  bot.editMessageCaption(
-                    repliedMessage.reply_to_message?.caption + `\nОШИБКИ:${wrongVariants.join("\n")}`,
-                    {
-                      chat_id: messageToReply.chat.id,
-                      message_id: messageToReply.message_id,
-                    }
-                  );
                 }
               } else {
                 geoscore[repliedMessage.from?.username || repliedMessage.from?.first_name || ""] = userGeoScore - 5;
