@@ -44,10 +44,10 @@ export const getRndGeogssrImage = async () => {
   const getLocation = async (lat: string, lon: string, lang: "ru" | "en") =>
     lang === "ru"
       ? fetch(
-          `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&extratags=1&accept-language=ru_RU,ru;q=0.5`
+          `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&extratags=1&accept-language=ru_RU,ru;q=0.5&zoom=3`
         ).then((res) => res.json() as Promise<TLocationResponse>)
       : fetch(
-          `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&extratags=1&accept-language=en_US,en;q=0.5`
+          `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&extratags=1&accept-language=en_US,en;q=0.5&zoom=3`
         ).then((res) => res.json() as Promise<TLocationResponse>);
 
   const maxPage = +[...(await fetchMarkup(999999999)).matchAll(/\<a class="static"\>\d+/gm)][0]?.[0].replace(
