@@ -104,6 +104,7 @@ export const geogessrModule = () => {
                 geoscore[repliedMessage.from?.username || repliedMessage.from?.first_name || ""] = userGeoScore - 5;
                 wrongVariants.push(repliedMessage.text || "");
                 bot.editMessageText(messageToReply.text + `\n ${wrongVariants.join("\n")}`, {
+                  chat_id: messageToReply.chat.id,
                   message_id: messageToReply.message_id,
                 });
                 sendTempMessage(repliedMessage, `@${repliedMessage.from?.username} не угадал, -5 geocoin`);
