@@ -81,11 +81,17 @@ export const geogessrModule = () => {
             if ("location" in repliedMessage) {
               const boundingBox = geoGssr.randomImage.locationEn.boundingbox;
               const answer = repliedMessage.location as TelegramBot.Location;
+              console.log(
+                answer.latitude >= +boundingBox[0],
+                answer.latitude <= +boundingBox[1],
+                answer.longitude >= +boundingBox[2],
+                answer.longitude <= +boundingBox[3]
+              );
               return (
-                answer[0] >= boundingBox[0] &&
-                answer[0] <= boundingBox[1] &&
-                answer[1] <= boundingBox[2] &&
-                answer[1] >= boundingBox[3]
+                answer.latitude >= +boundingBox[0] &&
+                answer.latitude <= +boundingBox[1] &&
+                answer.longitude >= +boundingBox[2] &&
+                answer.longitude <= +boundingBox[3]
               );
             }
             const answer = repliedMessage.text?.toLowerCase() || "";
