@@ -62,25 +62,32 @@ export const geogessrModule = () => {
                   type: "photo",
                   media: randomImage.url,
                   has_spoiler: true,
-                  caption:
-                    "Придумал\nНадо угадать какая строка может попасться в адресе(в т.ч. частичная строка)\nrus/eng",
                 },
                 { chat_id: messageToReply.chat.id, message_id: messageToReply.message_id, reply_markup }
               )
               .then(() => startTimeout(300000));
+
+            bot.editMessageCaption(
+              "Придумал\nНадо угадать какая строка может попасться в адресе(в т.ч. частичная строка)\nrus/eng",
+              { message_id: messageToReply.message_id, chat_id: messageToReply.chat.id }
+            );
+
             console.log("[LOG] GeoGuesser Answer", randomImage);
+
             return { getCoolDown: await getCoolDown, randomImage: randomImage };
           };
 
           let geoGssr = await handleGeoGssr(messageToReply);
 
+          //TODO: MAKE SOMETHING BETTER THIS IMPL SUCKS ASS
           const checkAnswer = (repliedMessage: TelegramBot.Message, lang: "Ru" | "En") => {
             const answer = repliedMessage.text?.toLowerCase() || "";
             const hint = geoGssr.randomImage[`location${lang}`];
             return (
               hint.display_name.toLowerCase().includes(answer) ||
               hint.name.toLowerCase().includes(answer) ||
-              hint.address.country.toLowerCase().includes(answer)
+              hint.address.country.toLowerCase().includes(answer) ||
+              hint.address.country_code.toLocaleLowerCase().includes(answer)
             );
           };
 
