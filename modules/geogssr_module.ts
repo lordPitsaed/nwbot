@@ -63,7 +63,7 @@ export const geogessrModule = () => {
                   media: randomImage.url,
                   has_spoiler: true,
                   caption:
-                    "Придумал\n пишем на русском языке название страны или любой строки которая может попасться в адресе, английский тоже роляет, но ультра-редко",
+                    "Придумал\nНадо угадать какая строка может попасться в адресе(в т.ч. частичная строка)\nrus/eng",
                 },
                 { chat_id: messageToReply.chat.id, message_id: messageToReply.message_id, reply_markup }
               )
@@ -71,7 +71,7 @@ export const geogessrModule = () => {
             return { getCoolDown: await getCoolDown, randomImage: randomImage };
           };
 
-          const geoGssr = await handleGeoGssr(messageToReply);
+          let geoGssr = await handleGeoGssr(messageToReply);
 
           const checkAnswer = (repliedMessage: TelegramBot.Message, lang: "Ru" | "En") => {
             const answer = repliedMessage.text?.toLowerCase() || "";
@@ -84,6 +84,7 @@ export const geogessrModule = () => {
           };
 
           const guessed: string[] = [];
+          const wrongVariants: string[] = [];
 
           bot.onReplyToMessage(messageToReply.chat.id, messageToReply.message_id, (repliedMessage) => {
             const userGeoScore = geoscore[repliedMessage.from?.username || repliedMessage.from?.first_name || ""];
@@ -95,13 +96,16 @@ export const geogessrModule = () => {
                 ) {
                   sendTempMessage(repliedMessage, `Тю блять арбузер ебаный @${repliedMessage.from?.username}`);
                 } else {
-                  geoscore[repliedMessage.from?.username || repliedMessage.from?.first_name || ""] = userGeoScore + 25;
+                  geoscore[repliedMessage.from?.username || repliedMessage.from?.first_name || ""] = userGeoScore + 100;
                   sendTempMessage(repliedMessage, `@${repliedMessage.from?.username} угадал, +25 geocoin`);
                   guessed.push(repliedMessage.from?.username || repliedMessage.from?.first_name || "");
                 }
               } else {
                 geoscore[repliedMessage.from?.username || repliedMessage.from?.first_name || ""] = userGeoScore - 5;
-
+                wrongVariants.push(repliedMessage.text || "");
+                bot.editMessageText(messageToReply.text + `\n ${wrongVariants.join("\n")}`, {
+                  message_id: messageToReply.message_id,
+                });
                 sendTempMessage(repliedMessage, `@${repliedMessage.from?.username} не угадал, -5 geocoin`);
               }
               setTimeout(() => bot.deleteMessage(repliedMessage.chat.id, repliedMessage.message_id), 4000);
@@ -115,7 +119,7 @@ export const geogessrModule = () => {
               if (geoGssr.getCoolDown() > 0) {
                 sendTempMessage(query.message || msg, `Ждем кул довн, ещё ${geoGssr.getCoolDown() / 1000} сек`);
               } else {
-                handleGeoGssr(messageToReply);
+                geoGssr = await handleGeoGssr(messageToReply);
               }
             }
 
@@ -129,7 +133,7 @@ export const geogessrModule = () => {
                 );
                 geoscore[query.from.username || query.from.first_name] -= 100;
 
-                handleGeoGssr(messageToReply);
+                geoGssr = await handleGeoGssr(messageToReply);
 
                 fs.writeFileSync(envVars.GEOSCORE, JSON.stringify(geoscore));
               } else {
