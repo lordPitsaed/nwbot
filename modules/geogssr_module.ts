@@ -73,9 +73,9 @@ export const geogessrModule = () => {
 
           const geoGssr = await handleGeoGssr(messageToReply);
 
-          const checkAnswer = (repliedMessage: TelegramBot.Message) => {
+          const checkAnswer = (repliedMessage: TelegramBot.Message, lang: "Ru" | "En") => {
             const answer = repliedMessage.text?.toLowerCase() || "";
-            const hint = geoGssr.randomImage.location;
+            const hint = geoGssr.randomImage[`location${lang}`];
             return (
               hint.display_name.toLowerCase().includes(answer) ||
               hint.name.toLowerCase().includes(answer) ||
@@ -86,7 +86,7 @@ export const geogessrModule = () => {
           bot.onReplyToMessage(messageToReply.chat.id, messageToReply.message_id, (repliedMessage) => {
             const userGeoScore = geoscore[repliedMessage.from?.username || repliedMessage.from?.first_name || ""];
             if (!!geoGssr?.randomImage) {
-              if (checkAnswer(repliedMessage)) {
+              if (checkAnswer(repliedMessage, "En") || checkAnswer(repliedMessage, "Ru")) {
                 geoscore[repliedMessage.from?.username || repliedMessage.from?.first_name || ""] = userGeoScore + 25;
                 sendTempMessage(repliedMessage, `@${repliedMessage.from?.username} угадал, +25 geocoin`);
               } else {
@@ -113,7 +113,7 @@ export const geogessrModule = () => {
               if (geoscore[query.from.username || query.from.first_name] > 100) {
                 sendTempMessage(
                   query.message || msg,
-                  `Haha dumb, whatever. -100 geocoins, get gud.\n${geoGssr.randomImage.location.display_name}`,
+                  `Haha dumb, whatever. -100 geocoins, get gud.\n${geoGssr.randomImage.locationEn.display_name}`,
                   {},
                   10000
                 );
