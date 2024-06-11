@@ -78,6 +78,16 @@ export const geogessrModule = () => {
 
           //TODO: MAKE SOMETHING BETTER THIS IMPL SUCKS ASS
           const checkAnswer = (repliedMessage: TelegramBot.Message, lang: "Ru" | "En") => {
+            if ("location" in repliedMessage) {
+              const boundingBox = geoGssr.randomImage.locationEn.boundingbox;
+              const answer = repliedMessage.location as TelegramBot.Location;
+              return (
+                answer[0] >= boundingBox[0] &&
+                answer[0] <= boundingBox[1] &&
+                answer[1] <= boundingBox[2] &&
+                answer[1] >= boundingBox[3]
+              );
+            }
             const answer = repliedMessage.text?.toLowerCase() || "";
             const hint = geoGssr.randomImage[`location${lang}`];
             if (!answer.includes("ё")) {
@@ -97,8 +107,8 @@ export const geogessrModule = () => {
             }
           };
 
-          const guessed: string[] = [];
-          const wrongVariants: string[] = [];
+          let guessed: string[] = [];
+          let wrongVariants: string[] = [];
 
           bot.onReplyToMessage(messageToReply.chat.id, messageToReply.message_id, (repliedMessage) => {
             const userGeoScore = geoscore[repliedMessage.from?.username || repliedMessage.from?.first_name || ""];
@@ -141,6 +151,8 @@ export const geogessrModule = () => {
                 sendTempMessage(query.message || msg, `Ждем кул довн, ещё ${geoGssr.getCoolDown() / 1000} сек`);
               } else {
                 geoGssr = await handleGeoGssr(messageToReply);
+                guessed = [];
+                wrongVariants = [];
               }
             }
 
@@ -155,6 +167,8 @@ export const geogessrModule = () => {
                 geoscore[query.from.username || query.from.first_name] -= 100;
 
                 geoGssr = await handleGeoGssr(messageToReply);
+                guessed = [];
+                wrongVariants = [];
 
                 fs.writeFileSync(envVars.GEOSCORE, JSON.stringify(geoscore));
               } else {
