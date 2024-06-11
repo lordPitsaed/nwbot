@@ -68,6 +68,7 @@ export const geogessrModule = () => {
                 { chat_id: messageToReply.chat.id, message_id: messageToReply.message_id, reply_markup }
               )
               .then(() => startTimeout(300000));
+            console.log("[LOG] GeoGuesser Answer", randomImage);
             return { getCoolDown: await getCoolDown, randomImage: randomImage };
           };
 
