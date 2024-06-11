@@ -80,12 +80,21 @@ export const geogessrModule = () => {
           const checkAnswer = (repliedMessage: TelegramBot.Message, lang: "Ru" | "En") => {
             const answer = repliedMessage.text?.toLowerCase() || "";
             const hint = geoGssr.randomImage[`location${lang}`];
-            return (
-              hint.display_name.toLowerCase().includes(answer) ||
-              hint.name.toLowerCase().includes(answer) ||
-              hint.address.country.toLowerCase().includes(answer) ||
-              hint.address.country_code.toLocaleLowerCase().includes(answer)
-            );
+            if (!answer.includes("ё")) {
+              return answer.length < 2
+                ? false
+                : hint.display_name.toLowerCase().replace(/ё/gi, "е").includes(answer) ||
+                    hint.name.toLowerCase().replace(/ё/gi, "е").includes(answer) ||
+                    hint.address.country.toLowerCase().replace(/ё/gi, "е").includes(answer) ||
+                    hint.address.country_code.toLocaleLowerCase().replace(/ё/gi, "е").includes(answer);
+            } else {
+              return answer.length < 2
+                ? false
+                : hint.display_name.toLowerCase().includes(answer) ||
+                    hint.name.toLowerCase().includes(answer) ||
+                    hint.address.country.toLowerCase().includes(answer) ||
+                    hint.address.country_code.toLocaleLowerCase().includes(answer);
+            }
           };
 
           const guessed: string[] = [];
