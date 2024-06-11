@@ -143,6 +143,7 @@ export const geogessrModule = () => {
     }
 
     if (msg.text === "GeoBalance") {
+      setTimeout(() => bot.deleteMessage(msg.chat.id, msg.message_id), 4000);
       bot.sendMessage(
         msg.chat.id,
         `@${msg.from?.username} Мда, негусто ${geoscore[msg.from?.username || msg.from?.first_name || ""] || 0}`,
