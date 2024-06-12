@@ -6,8 +6,8 @@ import { bot } from "../main";
 export const userRememberingModule = () => {
   bot.onText(/\/rememberme/, (msg) => {
     if (msg.chat.type === "private") {
-      if (!userIds.includes(String(msg.from?.id))) {
-        const newArr = userIds.push(String(msg.from?.id));
+      if (msg.from?.id && userIds.indexOf(msg.from.id) !== -1) {
+        const newArr = userIds.push(msg.from.id);
         fs.writeFileSync(envVars.REMEMBERED_USER_IDS, JSON.stringify({ userIds: newArr }));
         bot.sendMessage(msg.chat.id, `Q ${msg.from?.username}, ur id is: ${msg.from?.id}. I'll remember you`, {
           reply_to_message_id: msg.message_id,

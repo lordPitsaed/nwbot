@@ -5,7 +5,7 @@ import { bot } from "../main";
 export const alertsModule = async () => {
   const userNames = await getUserNamesById(bot, userIds, envVars.CHAT_ID || "");
 
-  return bot.on("text", (msg) => {
+  bot.on("text", (msg) => {
     //maybe refactor someday, but not today, sry future me :)
     if (/@izy0_0/gimu.test(msg.text || "")) {
       return bot.sendSticker(msg.chat.id, "CAACAgIAAxkBAAI33WPBSPQL2UROQimkYk9Ul3pW-v4UAAJ-IwACmJW4SSlarZtgGiRZLQQ", {

@@ -12,7 +12,7 @@ export const weenieMeterModule = () => {
   let weenies: TWeeniesMap = JSON.parse(fs.readFileSync(envVars.WEENIES, { encoding: "utf-8" }));
   let weeniesPbs: TWeeniesMap = JSON.parse(fs.readFileSync(envVars.WEENIES_PBS, { encoding: "utf-8" }));
 
-  return bot.on("text", async (msg) => {
+  bot.on("text", async (msg) => {
     if (msg.text?.toLowerCase() === "пися") {
       const user = msg.from?.username || msg.from?.first_name || "";
       const randomizedRandom = Math.random() * 1000 < 995;

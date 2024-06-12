@@ -10,7 +10,7 @@ export const keyboardModule = () => {
       encoding: "utf-8",
     })
   );
-  return bot.on("text", async (msg) => {
+  bot.on("text", async (msg) => {
     if (msg.text?.toLowerCase() === "бот ку") {
       if (message.hasOwnProperty("chat") && message.chat.id === msg.chat.id) {
         bot.deleteMessage(message.chat.id, message.message_id);

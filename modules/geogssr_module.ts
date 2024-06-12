@@ -18,7 +18,7 @@ export const geogessrModule = () => {
     fs.writeFileSync(envVars.GEOMESSAGE, "{}");
   }
 
-  return bot.on("text", async (msg) => {
+  bot.on("text", async (msg) => {
     if (msg.text === "GeoGuesser") {
       let geomessage: TelegramBot.Message | {} = JSON.parse(fs.readFileSync(envVars.GEOMESSAGE, { encoding: "utf-8" }));
 
@@ -167,6 +167,17 @@ export const geogessrModule = () => {
             if (geoGssr.getCoolDown() > 0) {
               sendTempMessage(query.message || msg, `Ждем кул довн, ещё ${geoGssr.getCoolDown() / 1000} сек`);
             } else {
+              bot.editMessageMedia(
+                {
+                  type: "photo",
+                  media:
+                    "https://images.fineartamerica.com/images/artworkimages/mediumlarge/2/thinking-cat-douglas-sacha.jpg",
+                  has_spoiler: false,
+                  caption: "Думою...",
+                },
+                { chat_id: messageToReply.chat.id, message_id: messageToReply.message_id }
+              );
+
               geoGssr = await handleGeoGssr(messageToReply);
               guessed = [];
               wrongVariants = [];

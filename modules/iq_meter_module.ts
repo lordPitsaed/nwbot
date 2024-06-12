@@ -12,7 +12,7 @@ export const iqMeterModule = () => {
   let iqs: TIqMap = JSON.parse(fs.readFileSync(envVars.IQ, { encoding: "utf-8" }));
   let iqsPbs: TIqMap = JSON.parse(fs.readFileSync(envVars.IQ_PBS, { encoding: "utf-8" }));
 
-  return bot.on("text", async (msg) => {
+  bot.on("text", async (msg) => {
     if (msg.text?.toLowerCase() === "айку" || msg.text?.toLowerCase() === "iq") {
       const user = msg.from?.username || msg.from?.first_name || "";
 

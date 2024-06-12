@@ -3,7 +3,7 @@ import fs from "fs";
 import { bot } from "../main";
 
 export const getPbModule = () => {
-  return bot.on("text", (msg) => {
+  bot.on("text", (msg) => {
     const weeniesPbs = JSON.parse(fs.readFileSync(envVars.WEENIES_PBS, { encoding: "utf-8" }));
     const iqPbs = JSON.parse(fs.readFileSync(envVars.IQ_PBS, { encoding: "utf-8" }));
     const user = msg.from?.username || msg.from?.first_name || "";
