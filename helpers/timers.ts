@@ -1,6 +1,6 @@
 export function startTimeout(duration: number) {
   const startTime = Date.now();
-  const timeoutId = setTimeout(() => {
+  let timeoutId = setTimeout(() => {
     console.log("[INFO]: Timeout completed");
   }, duration);
 
@@ -14,6 +14,9 @@ export function startTimeout(duration: number) {
 
       return remainingTime;
     },
-    cancelTimeout: () => clearTimeout(timeoutId),
+    cancelTimeout: () => {
+      clearTimeout(timeoutId);
+      timeoutId = undefined as unknown as NodeJS.Timeout;
+    },
   };
 }

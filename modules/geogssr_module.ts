@@ -41,9 +41,7 @@ export const geogessrModule = () => {
       try {
         const handleGeoGssr = async (messageToReply: TelegramBot.Message, cancelTimeout: () => void) => {
           if ("chat" in geomessage) {
-            if (cancelTimeout) {
-              cancelTimeout();
-            }
+            cancelTimeout();
             bot.deleteMessage(geomessage.chat.id, geomessage.message_id);
           }
           const randomImage = await getRndGeogssrImage();
