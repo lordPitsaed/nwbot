@@ -8,6 +8,6 @@ export function sendTempMessage(
   delay = 4000
 ) {
   return bot
-    .sendMessage(msg.chat.id, message, { ...options, message_thread_id: msg.message_thread_id })
+    .sendMessage(msg.chat.id, message, { ...options, reply_to_message_id: msg?.message_id })
     .then((msg) => setTimeout(() => bot.deleteMessage(msg.chat.id, msg.message_id), delay));
 }

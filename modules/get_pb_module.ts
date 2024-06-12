@@ -3,7 +3,7 @@ import fs from "fs";
 import { bot } from "../main";
 
 export const getPbModule = () => {
-  bot.on("text", (msg) => {
+  return bot.on("text", (msg) => {
     const weeniesPbs = JSON.parse(fs.readFileSync(envVars.WEENIES_PBS, { encoding: "utf-8" }));
     const iqPbs = JSON.parse(fs.readFileSync(envVars.IQ_PBS, { encoding: "utf-8" }));
     const user = msg.from?.username || msg.from?.first_name || "";
@@ -14,7 +14,8 @@ export const getPbModule = () => {
           msg.chat.id,
           `@${user} твои рекорды: 
           пися - ${weeniesPbs[user]}, 
-          айку - ${iqPbs[user]}`
+          айку - ${iqPbs[user]}`,
+          { reply_to_message_id: msg?.message_id }
         )
         .then((sentMsg) => {
           setTimeout(() => bot.deleteMessage(msg.chat.id, msg.message_id), 5000);

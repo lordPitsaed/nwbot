@@ -9,21 +9,14 @@ type TWeeniesMap = {
 };
 
 export const weenieMeterModule = () => {
-  let weenies: TWeeniesMap = JSON.parse(
-    fs.readFileSync(envVars.WEENIES, { encoding: "utf-8" })
-  );
-  let weeniesPbs: TWeeniesMap = JSON.parse(
-    fs.readFileSync(envVars.WEENIES_PBS, { encoding: "utf-8" })
-  );
+  let weenies: TWeeniesMap = JSON.parse(fs.readFileSync(envVars.WEENIES, { encoding: "utf-8" }));
+  let weeniesPbs: TWeeniesMap = JSON.parse(fs.readFileSync(envVars.WEENIES_PBS, { encoding: "utf-8" }));
 
-  bot.on("text", async (msg) => {
+  return bot.on("text", async (msg) => {
     if (msg.text?.toLowerCase() === "пися") {
       const user = msg.from?.username || msg.from?.first_name || "";
       const randomizedRandom = Math.random() * 1000 < 995;
-      const weenie =
-        (randomizedRandom
-          ? await getRandInt(200, 2500)
-          : await getRandInt(4000, 6000))[0] / 100;
+      const weenie = (randomizedRandom ? await getRandInt(200, 2500) : await getRandInt(4000, 6000))[0] / 100;
       const isPb = weenie > (weeniesPbs[user] || 0);
       if (isPb) {
         weeniesPbs[user] = weenie;
@@ -34,33 +27,28 @@ export const weenieMeterModule = () => {
       if (!weenies.hasOwnProperty(user)) {
         weenies[user] = weenie;
         if (weenies[user] <= 5) {
-          bot.sendMessage(
-            msg.chat.id,
-            `Жесть... вот это корнишончик... ${weenie}см` + pbMessage
-          );
+          bot.sendMessage(msg.chat.id, `Жесть... вот это корнишончик... ${weenie}см` + pbMessage, {
+            reply_to_message_id: msg.message_id,
+          });
         } else if (weenies[user] <= 10) {
-          bot.sendMessage(
-            msg.chat.id,
-            `Твоя пися ${weenie}см. Соболезнуем ;(` + pbMessage
-          );
+          bot.sendMessage(msg.chat.id, `Твоя пися ${weenie}см. Соболезнуем ;(` + pbMessage, {
+            reply_to_message_id: msg.message_id,
+          });
         } else if (weenies[user] <= 15) {
-          bot.sendMessage(msg.chat.id, `Твоя пися ${weenie}см.` + pbMessage);
+          bot.sendMessage(msg.chat.id, `Твоя пися ${weenie}см.` + pbMessage, { reply_to_message_id: msg.message_id });
         } else if (weenies[user] <= 25) {
-          bot.sendMessage(
-            msg.chat.id,
-            `Вот это елда... Завидую блин. ${weenie}см` + pbMessage
-          );
+          bot.sendMessage(msg.chat.id, `Вот это елда... Завидую блин. ${weenie}см` + pbMessage, {
+            reply_to_message_id: msg.message_id,
+          });
         } else if (weenies[user] > 25) {
-          bot.sendMessage(
-            msg.chat.id,
-            `НИХУЯ, НЕ УБЕЙ НИКОГО ЭТОЙ ХУЙНЕЙ, ЛАДНО? ${weenie}см` + pbMessage
-          );
+          bot.sendMessage(msg.chat.id, `НИХУЯ, НЕ УБЕЙ НИКОГО ЭТОЙ ХУЙНЕЙ, ЛАДНО? ${weenie}см` + pbMessage, {
+            reply_to_message_id: msg.message_id,
+          });
         }
       } else {
-        bot.sendMessage(
-          msg.chat.id,
-          `А ну-ка нах! Пися уже есть в базе, смотри - ${weenies[user]}см`
-        );
+        bot.sendMessage(msg.chat.id, `А ну-ка нах! Пися уже есть в базе, смотри - ${weenies[user]}см`, {
+          reply_to_message_id: msg.message_id,
+        });
       }
 
       fs.writeFileSync(envVars.WEENIES, JSON.stringify(weenies));
@@ -68,10 +56,9 @@ export const weenieMeterModule = () => {
     }
 
     if (msg.text?.toLowerCase() === "писятоп") {
-      bot.sendMessage(
-        msg.chat.id,
-        getTopFromObj(weenies, "Топ пись на сегодня")
-      );
+      bot.sendMessage(msg.chat.id, getTopFromObj(weenies, "Топ пись на сегодня"), {
+        reply_to_message_id: msg.message_id,
+      });
     }
   });
 
@@ -81,9 +68,7 @@ export const weenieMeterModule = () => {
   rule.tz = "Europe/Moscow";
   schedule.scheduleJob(rule, () => {
     fs.writeFileSync(envVars.WEENIES, "{}");
-    weenies = JSON.parse(
-      fs.readFileSync(envVars.WEENIES, { encoding: "utf-8" })
-    );
+    weenies = JSON.parse(fs.readFileSync(envVars.WEENIES, { encoding: "utf-8" }));
     bot.sendMessage(envVars.CHAT_ID, "Великое обнуление пиписек!");
   });
 
@@ -93,16 +78,9 @@ export const weenieMeterModule = () => {
   pbRule.tz = "Europe/Moscow";
   pbRule.date = 1;
   schedule.scheduleJob(pbRule, () => {
-    weeniesPbs = JSON.parse(
-      fs.readFileSync(envVars.WEENIES_PBS, { encoding: "utf-8" })
-    );
-    bot.sendMessage(
-      envVars.CHAT_ID,
-      getTopFromObj(weeniesPbs, "Топ пись за месяц")
-    );
+    weeniesPbs = JSON.parse(fs.readFileSync(envVars.WEENIES_PBS, { encoding: "utf-8" }));
+    bot.sendMessage(envVars.CHAT_ID, getTopFromObj(weeniesPbs, "Топ пись за месяц"));
     fs.writeFileSync(envVars.WEENIES_PBS, "{}");
-    weeniesPbs = JSON.parse(
-      fs.readFileSync(envVars.WEENIES_PBS, { encoding: "utf-8" })
-    );
+    weeniesPbs = JSON.parse(fs.readFileSync(envVars.WEENIES_PBS, { encoding: "utf-8" }));
   });
 };

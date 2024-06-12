@@ -1,10 +1,6 @@
 import TelegramBot from "node-telegram-bot-api";
 
-export async function getUserNamesById(
-  bot: TelegramBot,
-  usersIds: string[],
-  chatId: string
-) {
+export async function getUserNamesById(bot: TelegramBot, usersIds: number[], chatId: string) {
   const usernames: string[] = [];
   if (usersIds) {
     for (let i = 0; i < usersIds.length; i++) {
@@ -18,11 +14,7 @@ export async function getUserNamesById(
           throw new Error();
         }
       } catch (err) {
-        console.warn(
-          "[WARN] Unable to fetch username for id:",
-          usersIds[i],
-          err
-        );
+        console.warn("[WARN] Unable to fetch username for id:", usersIds[i], err);
       }
     }
   }

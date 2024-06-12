@@ -1,7 +1,7 @@
 import schedule from "node-schedule";
 import TelegramBot from "node-telegram-bot-api";
 import repl from "repl";
-import { envVars } from "./constants";
+import { envVars, userIds } from "./constants";
 import { alertsModule, iqMeterModule, sigameRandomModule, userRememberingModule } from "./modules";
 import { weenieMeterModule } from "./modules/weenie_meter_module";
 import { prayForNwbButtonModule } from "./modules/pray_for_nwb_button_module/pray_for_nwb_button_module";
@@ -28,7 +28,14 @@ bot.onText(/\/ruok/, (msg) => {
   bot.sendMessage(msg.chat.id, "I`M OK");
 });
 
-bot.on("message", (msg) => envVars.LOG_ALL && console.log(msg));
+bot.on("message", (msg) => {
+  if (msg.from?.id && userIds.indexOf(msg.from.id) === -1) {
+    bot.sendMessage(msg.chat.id, "TbI KTo?", { reply_to_message_id: msg.message_id });
+    msg.text = null as unknown as undefined;
+  }
+});
+console.log(envVars.LOG_ALL);
+bot.on("message", (msg) => (envVars.LOG_ALL ? console.log(msg) : null));
 
 const handleExit = async () => {
   console.log("[EXIT] Shutting down bot");

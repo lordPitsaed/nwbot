@@ -2,6 +2,7 @@ import TelegramBot from "node-telegram-bot-api";
 import { bot } from "../main";
 import fs from "fs";
 import { envVars } from "../constants";
+import { sendErrorMessage } from "../helpers/sendErrorMessage";
 
 export const keyboardModule = () => {
   let message: TelegramBot.Message = JSON.parse(
@@ -9,12 +10,11 @@ export const keyboardModule = () => {
       encoding: "utf-8",
     })
   );
-  bot.on("text", async (msg) => {
+  return bot.on("text", async (msg) => {
     if (msg.text?.toLowerCase() === "бот ку") {
       if (message.hasOwnProperty("chat") && message.chat.id === msg.chat.id) {
         bot.deleteMessage(message.chat.id, message.message_id);
       }
-      setTimeout(() => bot.deleteMessage(msg.chat.id, msg.message_id), 5000);
 
       const options = {
         reply_markup: {
@@ -28,16 +28,16 @@ export const keyboardModule = () => {
           resize_keyboard: true,
           one_time_keyboard: true,
         },
-        message_thread_id: msg.message_thread_id,
+        reply_to_message_id: msg?.message_id,
       };
 
       try {
-        message = await bot.sendMessage(msg.chat.id, "ку", {
-          ...options,
-          reply_to_message_id: msg.message_id,
+        message = await bot.sendMessage(msg.chat.id, "ку", options).then((sentMsg) => {
+          bot.deleteMessage(msg.chat.id, msg.message_id);
+          return sentMsg;
         });
       } catch {
-        message = await bot.sendMessage(msg.chat.id, "ку", options);
+        sendErrorMessage(msg.chat.id).then(() => bot.deleteMessage(msg.chat.id, msg.message_id));
       }
 
       fs.writeFileSync(envVars.KEYBOARD_MESSAGE, JSON.stringify(message));
