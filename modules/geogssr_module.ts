@@ -22,9 +22,6 @@ export const geogessrModule = () => {
     if (msg.text === "GeoGuesser") {
       let geomessage: TelegramBot.Message | {} = JSON.parse(fs.readFileSync(envVars.GEOMESSAGE, { encoding: "utf-8" }));
 
-      if ("chat" in geomessage) {
-        bot.deleteMessage(geomessage.chat.id, geomessage.message_id);
-      }
       const messageToReply = await bot
         .sendPhoto(
           msg.chat.id,
@@ -42,7 +39,13 @@ export const geogessrModule = () => {
       fs.writeFileSync(envVars.GEOMESSAGE, JSON.stringify(messageToReply));
 
       try {
-        const handleGeoGssr = async (messageToReply: TelegramBot.Message) => {
+        const handleGeoGssr = async (messageToReply: TelegramBot.Message, cancelTimeout: () => void) => {
+          if ("chat" in geomessage) {
+            if (cancelTimeout) {
+              cancelTimeout();
+            }
+            bot.deleteMessage(geomessage.chat.id, geomessage.message_id);
+          }
           const randomImage = await getRndGeogssrImage();
 
           if (randomImage?.lat === undefined || randomImage.lon === undefined || randomImage.url === undefined) {
@@ -61,18 +64,16 @@ export const geogessrModule = () => {
             ],
           };
 
-          const getCoolDown = bot
-            .editMessageMedia(
-              {
-                type: "photo",
-                media: randomImage.url,
-                has_spoiler: true,
-                caption:
-                  "Придумал\nНадо угадать СТРАНУ(в т.ч. часть названия) или отправить локацию с точкой внутри страны. Языки: rus/eng",
-              },
-              { chat_id: messageToReply.chat.id, message_id: messageToReply.message_id, reply_markup }
-            )
-            .then(() => startTimeout(300000));
+          bot.editMessageMedia(
+            {
+              type: "photo",
+              media: randomImage.url,
+              has_spoiler: true,
+              caption:
+                "Придумал\nНадо угадать СТРАНУ(в т.ч. часть названия) или отправить локацию с точкой внутри страны. Языки: rus/eng",
+            },
+            { chat_id: messageToReply.chat.id, message_id: messageToReply.message_id, reply_markup }
+          );
 
           console.log(
             "[LOG] GeoGuesser Answer. Country:",
@@ -83,10 +84,12 @@ export const geogessrModule = () => {
             randomImage.locationEn.lon
           );
 
-          return { getCoolDown: await getCoolDown, randomImage, reply_markup };
+          return { randomImage, reply_markup };
         };
 
-        let geoGssr = await handleGeoGssr(messageToReply);
+        //TODO: Move this to handleGeoGssrFunc
+        let timer = startTimeout(300000);
+        let geoGssr = await handleGeoGssr(messageToReply, timer.cancelTimeout);
 
         const checkAnswer = (repliedMessage: TelegramBot.Message, lang: "Ru" | "En") => {
           if ("location" in repliedMessage) {
@@ -132,10 +135,10 @@ export const geogessrModule = () => {
               ) {
                 sendTempMessage(repliedMessage, `Тю блять арбузер ебаный @${repliedMessage.from?.username}`);
               } else {
-                geoscore[repliedMessage.from?.username || repliedMessage.from?.first_name || ""] = userGeoScore + 95;
+                geoscore[repliedMessage.from?.username || repliedMessage.from?.first_name || ""] = userGeoScore + 99;
                 sendTempMessage(
                   repliedMessage,
-                  `@${repliedMessage.from?.username} угадал, \\+95 geocoin, вот тебе ссилка на ||[локу](https://www.openstreetmap.org/search?query=\\${geoGssr.randomImage.locationEn.lat}%20\\${geoGssr.randomImage.locationEn.lon})||`,
+                  `@${repliedMessage.from?.username} угадал, \\+99 geocoin, вот тебе ссилка на ||[локу](https://www.openstreetmap.org/search?query=\\${geoGssr.randomImage.locationEn.lat}%20\\${geoGssr.randomImage.locationEn.lon})||`,
                   { parse_mode: "MarkdownV2" },
                   20000
                 );
@@ -163,9 +166,10 @@ export const geogessrModule = () => {
         });
 
         bot.on("callback_query", async (query) => {
-          if (query.data === "get_new_geo_image" && !!geoGssr?.getCoolDown) {
-            if (geoGssr.getCoolDown() > 0) {
-              sendTempMessage(query.message || msg, `Ждем кул довн, ещё ${geoGssr.getCoolDown() / 1000} сек`);
+          const timeRemaining = timer.getTimeRemaining();
+          if (query.data === "get_new_geo_image" && timeRemaining) {
+            if (timeRemaining > 0) {
+              sendTempMessage(query.message || msg, `Ждем кул довн, ещё ${timeRemaining / 1000} сек`);
             } else {
               bot.editMessageMedia(
                 {
@@ -177,8 +181,9 @@ export const geogessrModule = () => {
                 },
                 { chat_id: messageToReply.chat.id, message_id: messageToReply.message_id }
               );
-
-              geoGssr = await handleGeoGssr(messageToReply);
+              timer.cancelTimeout();
+              timer = startTimeout(300000);
+              geoGssr = await handleGeoGssr(messageToReply, timer.cancelTimeout);
               guessed = [];
               wrongVariants = [];
             }
@@ -205,7 +210,9 @@ export const geogessrModule = () => {
                 { chat_id: messageToReply.chat.id, message_id: messageToReply.message_id }
               );
 
-              geoGssr = await handleGeoGssr(messageToReply);
+              timer.cancelTimeout();
+              timer = startTimeout(300000);
+              geoGssr = await handleGeoGssr(messageToReply, timer.cancelTimeout);
               guessed = [];
               wrongVariants = [];
 
@@ -246,7 +253,7 @@ export const geogessrModule = () => {
   rule.tz = "Europe/Moscow";
   schedule.scheduleJob(rule, () => {
     for (let geouser in geoscore) {
-      geoscore[geouser] += 50;
+      geoscore[geouser] += 99;
     }
     fs.writeFileSync(envVars.GEOSCORE, JSON.stringify(geoscore));
     bot.sendMessage(envVars.CHAT_ID, "Зарплата пришла $GEO 🚀!");

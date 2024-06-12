@@ -4,12 +4,16 @@ export function startTimeout(duration: number) {
     console.log("[INFO]: Timeout completed");
   }, duration);
 
-  return function getTimeRemaining() {
-    if (!startTime || !timeoutId) {
-      return 0;
-    }
-    const elapsedTime = Date.now() - startTime;
-    const remainingTime = Math.max(0, duration - elapsedTime);
-    return remainingTime;
+  return {
+    getTimeRemaining: () => {
+      if (!startTime || !timeoutId) {
+        return;
+      }
+      const elapsedTime = Date.now() - startTime;
+      const remainingTime = Math.max(0, duration - elapsedTime);
+
+      return remainingTime;
+    },
+    cancelTimeout: () => clearTimeout(timeoutId),
   };
 }
