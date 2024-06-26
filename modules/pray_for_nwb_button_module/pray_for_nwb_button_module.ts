@@ -17,7 +17,7 @@ export const prayForNwbButtonModule = () => {
         const randomQuote = quotes[randomIndex || Math.floor(Math.random() * (quotes.length - 1))];
 
         bot.sendMessage(msg.chat.id, randomQuote, { reply_to_message_id: msg?.message_id }).then();
-        getTimeRemaining = startTimeout(3600000);
+        getTimeRemaining = startTimeout(3600000).getTimeRemaining as () => number;
       } else {
         bot.deleteMessage(msg.chat.id, msg.message_id);
         bot
