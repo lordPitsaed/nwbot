@@ -19,14 +19,16 @@ export const prayForNwbButtonModule = () => {
         bot.sendMessage(msg.chat.id, randomQuote, { reply_to_message_id: msg?.message_id }).then();
         getTimeRemaining = startTimeout(3600000).getTimeRemaining as () => number;
       } else {
-        bot.deleteMessage(msg.chat.id, msg.message_id);
         bot
           .sendMessage(
             msg.chat.id,
             `не гони так, интернет-герой, я в кд, ещё ${(getTimeRemaining() / 60000).toFixed(0)} мин`,
             { reply_to_message_id: msg?.message_id }
           )
-          .then((sentMsg) => setTimeout(() => bot.deleteMessage(sentMsg.chat.id, sentMsg.message_id), 5000));
+          .then((sentMsg) => {
+            setTimeout(() => bot.deleteMessage(sentMsg.chat.id, sentMsg.message_id), 5000);
+            bot.deleteMessage(msg.chat.id, msg.message_id);
+          });
       }
     }
   });
